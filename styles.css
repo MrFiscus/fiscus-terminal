@@ -103,8 +103,31 @@ body {
 
 .name{
   color: #10b981;
-  font-weight: 750;
-  font-size: 20px;
+  font-size: 0.75vw;
+
+
+}
+
+.arrows{
+  color: #10b981;
+  font-weight: 800;
+}
+
+.green-text{
+  color: #10b981;
+  font-weight: bolder;
+}
+#output-area{
+  margin: 0px;
+  padding-top: -10px;
+  display: absolute;
+  
+}
+
+#top-output{
+  margin: 0px;
+  padding-bottom: 0px ;
+  text-align: center ;
 }
 
 .output {
@@ -596,10 +619,30 @@ body {
 }
 
 /* Responsive Layouts */
-@media screen and (max-width: 768px) {
+@media screen and (max-width: 815px) {
   .header {
-    flex-direction: column;
     align-items: flex-start;
+    flex-direction: row;
+  }
+
+  .button {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    display: inline-block;
+    position: relative;
+    cursor: pointer;
+    scale: 0.8;
+  }
+
+  .name{
+    color: #10b981;
+    font-size: 1.5vw;
+  }
+
+  .minimized-label{
+    scale: 0.75;
+    margin-left: 0px;
   }
 
   .tabs {
@@ -616,10 +659,10 @@ body {
     font-size: 14px;
   }
 
-  .input-line {
+  /* .input-line {
     flex-direction: column;
     align-items: flex-start;
-  }
+  } */
 
   #terminal-input {
     width: 100%; /* Take full width on smaller screens */

@@ -156,8 +156,16 @@ document.addEventListener("DOMContentLoaded", () => {
 
     function appendWelcomeMessage() {
         const welcomeMessage = `
-            <p class="output">Hi i am <span class="name">Smaran Pokharel.</span> Welcome to my portfolio website.</p>
-            <p class="output">Type the available commands:</p>
+            <pre class="name">
+█████ █   █  ███  ████   ███  █   █  ████   ███  █  █  █   █  ███  ████  █████ █     
+█     ██ ██ █   █ █   █ █   █ ██  █  █   █ █   █ █ █   █   █ █   █ █   █ █     █    
+█████ █ █ █ █████ ████  █████ █ █ █  ████  █   █ ██ █  █████ █████ ████  ████  █     
+    █ █   █ █   █ █   █ █   █ █  ██  █     █   █ █  █  █   █ █   █ █   █ █     █    
+█████ █   █ █   █ █   █ █   █ █   █  █      ███  █   █ █   █ █   █ █   █ █████ █████
+</pre>
+
+          
+            <p class="output"><span class="arrows">>></span> Welcome to my <span class="green-text">portfolio </span>website. Type the available commands:</p>
             <p class="output"><span class="clickable-command" data-command="about"><b>about</b></span>: Information about me</p>
             <p class="output"><span class="clickable-command" data-command="skills"><b>skills</b></span>: Show my skills</p>
             <p class="output"><span class="clickable-command" data-command="projects"><b>projects</b></span>: Show my projects</p>
