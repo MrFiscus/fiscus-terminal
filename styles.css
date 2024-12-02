@@ -104,7 +104,7 @@ body {
 .name{
   color: #10b981;
   font-size: 0.75vw;
-
+  padding-left: 1%;
 
 }
 
@@ -638,6 +638,7 @@ body {
   .name{
     color: #10b981;
     font-size: 1.5vw;
+    padding-left: 1%;
   }
 
   .minimized-label{
