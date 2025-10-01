@@ -120,7 +120,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 "My Resume",
                 `
                 <p>You can view my resume below:</p>
-                <iframe src="resume.pdf" width="100%" height="500" style="border: none;"></iframe>
+                <iframe src="Resume.pdf" width="100%" height="500" style="border: none;"></iframe>
                 <p><a href="resume.pdf" download="My_Resume.pdf" style="color: #10b981; font-size: 20px; font-weight: bolder; text-decoration: underline;">Download Resume</a></p>
                 `
             );
