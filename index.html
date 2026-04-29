@@ -5,45 +5,114 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Smaran Pokharel</title>
   <link rel="stylesheet" href="styles.css">
-  <link rel="shortcut icon" type="x-icon" href="./S-removebg-preview.png">
+  <link rel="icon" type="image/png" href="./S-removebg-preview.png">
 </head>
 <body>
-  <div class="terminal">
-    <div class="header">
-        
-      <div class="tabs" id="tabs-container">
-        <span class="tab">Portfolio</span>
+  <div class="desktop">
+    <aside class="desktop-icons">
+      <button class="desktop-icon" data-command="terminal" type="button">
+        <span class="desktop-icon-art icon-terminal"></span>
+        <span class="desktop-icon-label">Terminal.exe</span>
+      </button>
+      <button class="desktop-icon" data-command="about" type="button">
+        <span class="desktop-icon-art icon-about"></span>
+        <span class="desktop-icon-label">About.txt</span>
+      </button>
+      <button class="desktop-icon" data-command="education" type="button">
+        <span class="desktop-icon-art icon-education"></span>
+        <span class="desktop-icon-label">Education.doc</span>
+      </button>
+      <button class="desktop-icon" data-command="experience" type="button">
+        <span class="desktop-icon-art icon-experience"></span>
+        <span class="desktop-icon-label">Experience.log</span>
+      </button>
+      <button class="desktop-icon" data-command="projects" type="button">
+        <span class="desktop-icon-art icon-projects"></span>
+        <span class="desktop-icon-label">Projects.exe</span>
+      </button>
+      <button class="desktop-icon" data-command="skills" type="button">
+        <span class="desktop-icon-art icon-skills"></span>
+        <span class="desktop-icon-label">Skills.ini</span>
+      </button>
+      <button class="desktop-icon" data-command="contact" type="button">
+        <span class="desktop-icon-art icon-contact"></span>
+        <span class="desktop-icon-label">Contact.msg</span>
+      </button>
+      <button class="desktop-icon" data-command="resume" type="button">
+        <span class="desktop-icon-art icon-resume"></span>
+        <span class="desktop-icon-label">Resume.pdf</span>
+      </button>
+    </aside>
+
+    <main class="terminal-window">
+      <div class="window-titlebar">
+        <div class="titlebar-left">
+          <span class="titlebar-app-icon icon-terminal" aria-hidden="true"></span>
+          <span class="titlebar-text">Portfolio Terminal</span>
+        </div>
+        <div class="titlebar-controls">
+          <button class="titlebar-button" data-window-action="minimize" onclick="event.stopPropagation(); window.handleWindowButton(this); return false;" type="button" aria-label="Minimize terminal">_</button>
+          <button class="titlebar-button" data-window-action="maximize" onclick="event.stopPropagation(); window.handleWindowButton(this); return false;" type="button" aria-label="Maximize terminal">[]</button>
+          <button class="titlebar-button" data-window-action="close" onclick="event.stopPropagation(); window.handleWindowButton(this); return false;" type="button" aria-label="Close terminal">X</button>
+        </div>
       </div>
-      <div class="control-buttons">
-        <span class="button maximize"></span>
-        <span class="button minimize"></span>
-        <span class="button close"></span>
+
+      <div class="terminal-body">
+        <div id="output-area">
+          <pre class="ascii-banner">███████╗███╗   ███╗ █████╗ ██████╗  █████╗ ███╗   ██╗  ██████╗  ██████╗ ██╗  ██╗██╗  ██╗ █████╗ ██████╗ ███████╗██╗
+██╔════╝████╗ ████║██╔══██╗██╔══██╗██╔══██╗████╗  ██║  ██╔══██╗██╔═══██╗██║ ██╔╝██║  ██║██╔══██╗██╔══██╗██╔════╝██║
+███████╗██╔████╔██║███████║██████╔╝███████║██╔██╗ ██║  ██████╔╝██║   ██║█████╔╝ ███████║███████║██████╔╝█████╗  ██║
+╚════██║██║╚██╔╝██║██╔══██║██╔══██╗██╔══██║██║╚██╗██║  ██╔═══╝ ██║   ██║██╔═██╗ ██╔══██║██╔══██║██╔══██╗██╔══╝  ██║
+███████║██║ ╚═╝ ██║██║  ██║██║  ██║██║  ██║██║ ╚████║  ██║     ╚██████╔╝██║  ██╗██║  ██║██║  ██║██║  ██║███████╗███████╗
+╚══════╝╚═╝     ╚═╝╚═╝  ╚═╝╚═╝  ╚═╝╚═╝  ╚═╝╚═╝  ╚═══╝  ╚═╝      ╚═════╝ ╚═╝  ╚═╝╚═╝  ╚═╝╚═╝  ╚═╝╚═╝  ╚═╝╚══════╝╚══════╝</pre>
+          <p class="output"><span class="terminal-arrow">&gt;&gt;</span> Welcome to my <span class="terminal-highlight">portfolio</span> website. Type a command or click one below:</p>
+          <p class="output"><span class="command-inline clickable-command" data-command="about">about</span>: Information about me</p>
+          <p class="output"><span class="command-inline clickable-command" data-command="education">education</span>: My university, coursework, and academic notes</p>
+          <p class="output"><span class="command-inline clickable-command" data-command="experience">experience</span>: Work and leadership experience</p>
+          <p class="output"><span class="command-inline clickable-command" data-command="skills">skills</span>: Languages, tools, and frameworks</p>
+          <p class="output"><span class="command-inline clickable-command" data-command="projects">projects</span>: Selected technical projects</p>
+          <p class="output"><span class="command-inline clickable-command" data-command="contact">contact</span>: My contact information</p>
+          <p class="output"><span class="command-inline clickable-command" data-command="resume">resume</span>: View and download my resume</p>
+          <p class="output"><span class="command-inline clickable-command" data-command="clear">clear</span>: Clear the terminal</p>
+        </div>
+
+        <div class="terminal-input-row">
+          <span class="prompt">guest@portfolio:~$</span>
+          <input id="terminal-input" type="text" spellcheck="false" autocomplete="off" aria-label="Command input">
+        </div>
+        <div class="window-statusbar">
+          <span>Ready</span>
+          <span>Terminal.exe</span>
+        </div>
       </div>
-    </div>
-    <div class="content">
-      <div id="output-area">
-        
-        <pre class="name">
-          █████ █   █  ███  ████   ███  █   █  ████   ███  █  █  █   █  ███  ████  █████ █     
-          █     ██ ██ █   █ █   █ █   █ ██  █  █   █ █   █ █ █   █   █ █   █ █   █ █     █    
-          █████ █ █ █ █████ ████  █████ █ █ █  ████  █   █ ██ █  █████ █████ ████  ████  █     
-              █ █   █ █   █ █   █ █   █ █  ██  █     █   █ █  █  █   █ █   █ █   █ █     █    
-          █████ █   █ █   █ █   █ █   █ █   █  █      ███  █   █ █   █ █   █ █   █ █████ █████
-          </pre>
-          
-                    
-                      <p class="output"><span class="arrows">>></span> Welcome to my <span class="green-text">portfolio </span>website. Type the available commands:</p>
-<p class="output"><span class="clickable-command" data-command="about"><b>about</b></span>: Information about me</p>
-<p class="output"><span class="clickable-command" data-command="skills"><b>skills</b></span>: Show my skills</p>
-<p class="output"><span class="clickable-command" data-command="projects"><b>projects</b></span>: Show my projects</p>
-<p class="output"><span class="clickable-command" data-command="contact"><b>contact</b></span>: My contact information</p>
-<p class="output"><span class="clickable-command" data-command="clear"><b>clear</b></span>: Clear the terminal</p>
+    </main>
+
+    <nav class="start-menu" id="start-menu" aria-label="Start menu">
+      <div class="start-menu-brand">Smaran</div>
+      <div class="start-menu-items">
+        <button class="start-menu-item" data-command="terminal" type="button"><span class="start-menu-icon icon-terminal"></span>Terminal</button>
+        <button class="start-menu-item" data-command="about" type="button"><span class="start-menu-icon icon-about"></span>About</button>
+        <button class="start-menu-item" data-command="education" type="button"><span class="start-menu-icon icon-education"></span>Education</button>
+        <button class="start-menu-item" data-command="experience" type="button"><span class="start-menu-icon icon-experience"></span>Experience</button>
+        <button class="start-menu-item" data-command="projects" type="button"><span class="start-menu-icon icon-projects"></span>Projects</button>
+        <button class="start-menu-item" data-command="skills" type="button"><span class="start-menu-icon icon-skills"></span>Skills</button>
+        <button class="start-menu-item" data-command="contact" type="button"><span class="start-menu-icon icon-contact"></span>Contact</button>
+        <button class="start-menu-item" data-command="resume" type="button"><span class="start-menu-icon icon-resume"></span>Resume</button>
+        <a class="start-menu-item" href="https://github.com/MrFiscus" target="_blank" rel="noreferrer"><span class="start-menu-icon icon-github"></span>GitHub</a>
+        <a class="start-menu-item" href="https://www.linkedin.com/in/smaran-pokharel-12a720305/" target="_blank" rel="noreferrer"><span class="start-menu-icon icon-linkedin"></span>LinkedIn</a>
       </div>
-      <div class="input-line">
-        <span class="prompt">guest@portfolio:~$&thinsp;</span>
-        <input type="text" id="terminal-input" autofocus>
-      </div>
-    </div>
+    </nav>
+
+    <footer class="taskbar">
+      <button class="start-button" id="start-button" type="button" aria-controls="start-menu" aria-expanded="false">
+        <span class="start-logo"></span>
+        <span>Start</span>
+      </button>
+
+      <div class="taskbar-tray" id="taskbar-tray" aria-label="Minimized windows"></div>
+
+      <div class="taskbar-clock" id="taskbar-clock">9:41 PM</div>
+    </footer>
   </div>
 
   <script src="script.js"></script>

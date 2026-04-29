@@ -1,287 +1,1188 @@
 document.addEventListener("DOMContentLoaded", () => {
     const input = document.getElementById("terminal-input");
     const outputArea = document.getElementById("output-area");
-    const tabsContainer = document.getElementById("tabs-container");
+    const resumePdf = "Smaran-Resume (1).pdf";
+    const taskbarClock = document.getElementById("taskbar-clock");
+    const startButton = document.getElementById("start-button");
+    const startMenu = document.getElementById("start-menu");
+    const taskbarTray = document.getElementById("taskbar-tray");
+    const commandIcons = {
+        help: "icon-help",
+        about: "icon-about",
+        education: "icon-education",
+        experience: "icon-experience",
+        projects: "icon-projects",
+        skills: "icon-skills",
+        achievements: "icon-achievements",
+        contact: "icon-contact",
+        resume: "icon-resume",
+    };
+    let topWindowZIndex = 30;
+    let windowTaskId = 0;
 
-    const commands = {
-        about: () => {
-            appendOutput("Showing information about me");
-            createPopup("About Me", `
-                <div class="about-me-content">
-                    <img src="image-self.jpg" alt="Your Name" class="about-me-image">
-                    <div class="about-me-text">
-                        <p>I’m an 18-year-old with a deep passion for <span class=sub-about> web development </span> and <span class=sub-about> design</span>. Currently a freshman at <span class=sub-about>Dakota State University </span>, I am skilled in <span class=sub-about> HTML, CSS, JavaScript </span>, and <span class=sub-about>web frameworks </span> , with hands-on experience building functional, high-quality websites. My strong background in graphic design, coupled with expertise in tools like <span class=sub-about> Photoshop</span> and <span class=sub-about> Figma </span>, allows me to deliver creative and polished projects that blend functionality with aesthetics.</p>
+    const welcomeMarkup = `
+        <pre class="ascii-banner">███████╗███╗   ███╗ █████╗ ██████╗  █████╗ ███╗   ██╗  ██████╗  ██████╗ ██╗  ██╗██╗  ██╗ █████╗ ██████╗ ███████╗██╗
+██╔════╝████╗ ████║██╔══██╗██╔══██╗██╔══██╗████╗  ██║  ██╔══██╗██╔═══██╗██║ ██╔╝██║  ██║██╔══██╗██╔══██╗██╔════╝██║
+███████╗██╔████╔██║███████║██████╔╝███████║██╔██╗ ██║  ██████╔╝██║   ██║█████╔╝ ███████║███████║██████╔╝█████╗  ██║
+╚════██║██║╚██╔╝██║██╔══██║██╔══██╗██╔══██║██║╚██╗██║  ██╔═══╝ ██║   ██║██╔═██╗ ██╔══██║██╔══██║██╔══██╗██╔══╝  ██║
+███████║██║ ╚═╝ ██║██║  ██║██║  ██║██║  ██║██║ ╚████║  ██║     ╚██████╔╝██║  ██╗██║  ██║██║  ██║██║  ██║███████╗███████╗
+╚══════╝╚═╝     ╚═╝╚═╝  ╚═╝╚═╝  ╚═╝╚═╝  ╚═╝╚═╝  ╚═══╝  ╚═╝      ╚═════╝ ╚═╝  ╚═╝╚═╝  ╚═╝╚═╝  ╚═╝╚═╝  ╚═╝╚══════╝╚══════╝</pre>
+        <p class="output"><span class="terminal-arrow">&gt;&gt;</span> Welcome to my <span class="terminal-highlight">portfolio</span> website. Type a command or click one below:</p>
+        <p class="output"><span class="command-inline clickable-command" data-command="about">about</span>: Information about me</p>
+        <p class="output"><span class="command-inline clickable-command" data-command="education">education</span>: My university, coursework, and academic notes</p>
+        <p class="output"><span class="command-inline clickable-command" data-command="experience">experience</span>: Work and leadership experience</p>
+        <p class="output"><span class="command-inline clickable-command" data-command="skills">skills</span>: Languages, tools, and frameworks</p>
+        <p class="output"><span class="command-inline clickable-command" data-command="projects">projects</span>: Selected technical projects</p>
+        <p class="output"><span class="command-inline clickable-command" data-command="contact">contact</span>: My contact information</p>
+        <p class="output"><span class="command-inline clickable-command" data-command="resume">resume</span>: View and download my resume</p>
+        <p class="output"><span class="command-inline clickable-command" data-command="clear">clear</span>: Clear the terminal</p>
+    `;
+
+    const commandPanels = {
+        help: {
+            title: "Help",
+            content: `
+                <section class="help-panel">
+                    <div class="help-hero">
+                        <span class="help-hero-icon icon-help" aria-hidden="true"></span>
+                        <div>
+                            <p class="popup-kicker">Command Center</p>
+                            <h2 class="popup-heading">How do you want to explore?</h2>
+                            <p>Click a command tile or type it into the terminal. The desktop icons, Start menu, and terminal all lead to the same portfolio apps.</p>
+                        </div>
+                    </div>
+                    <div class="help-card">
+                        <p class="popup-kicker">Navigation</p>
+                        <div class="help-command-grid">
+                            <button class="help-command" data-command="about" type="button"><span class="icon-about"></span>about</button>
+                            <button class="help-command" data-command="education" type="button"><span class="icon-education"></span>education</button>
+                            <button class="help-command" data-command="experience" type="button"><span class="icon-experience"></span>experience</button>
+                            <button class="help-command" data-command="projects" type="button"><span class="icon-projects"></span>projects</button>
+                            <button class="help-command" data-command="skills" type="button"><span class="icon-skills"></span>skills</button>
+                            <button class="help-command" data-command="contact" type="button"><span class="icon-contact"></span>contact</button>
+                            <button class="help-command" data-command="resume" type="button"><span class="icon-resume"></span>resume</button>
+                        </div>
+                    </div>
+                    <div class="help-card">
+                        <p class="popup-kicker">Terminal</p>
+                        <div class="help-pill-row">
+                            <button data-command="terminal" type="button">terminal</button>
+                            <button data-command="clear" type="button">clear</button>
+                            <button data-command="help" type="button">help</button>
+                            <button type="button" data-copy-command="ls">ls</button>
+                            <button type="button" data-copy-command="whoami">whoami</button>
+                            <button type="button" data-copy-command="date">date</button>
+                        </div>
+                    </div>
+                    <div class="help-card">
+                        <p class="popup-kicker">Easter Eggs</p>
+                        <div class="help-pill-row help-easter-row">
+                            <button type="button" data-copy-command="sudo">sudo</button>
+                            <button type="button" data-copy-command="coffee">coffee</button>
+                            <button type="button" data-copy-command="theme">theme</button>
+                            <button type="button" data-copy-command="neofetch">neofetch</button>
+                            <button type="button" data-copy-command="konami">konami</button>
+                        </div>
+                    </div>
+                    <p class="help-tip">Tip: command tiles open windows. Easter egg pills copy the command into the terminal input so you can press Enter like a proper hacker.</p>
+                </section>
+            `,
+        },
+        about: {
+            title: "About.txt",
+            content: `
+                <section class="popup-hero">
+                    <span class="popup-hero-icon icon-about" aria-hidden="true"></span>
+                    <div>
+                        <p class="popup-kicker">Profile</p>
+                        <h2 class="popup-hero-title">Smaran Pokharel</h2>
+                        <p class="popup-hero-text">CS Honors @ DSU | Web Developer | Cyber Security Enthusiast based in Madison, South Dakota.</p>
+                    </div>
+                </section>
+                <section class="about-profile">
+                    <div class="about-sidebar">
+                        <div class="profile-photo-frame">
+                            <img src="image-self.jpg" alt="Smaran Pokharel portrait" class="profile-photo">
+                        </div>
+                        <div class="about-status">
+                            <span>Available for internships</span>
+                            <span>Madison, SD</span>
+                        </div>
+                    </div>
+                    <div class="about-main">
+                        <div class="about-nameplate">
+                            <p class="popup-kicker">Hello there</p>
+                            <h3 class="about-title">I build useful web apps, playful interfaces, and technical projects with personality.</h3>
+                            <p>I am a Computer Science Honors student at Dakota State University who likes turning rough ideas into things people can actually use. My projects range from terminal learning games and Spotify data apps to movie tools, C++ data-structure assignments, Assembly experiments, and this retro desktop portfolio.</p>
+                        </div>
+                        <div class="about-fields">
+                            <div><span>Current</span><b>CS Honors @ Dakota State University</b></div>
+                            <div><span>Focus</span><b>Web development, cybersecurity, and software systems</b></div>
+                            <div><span>Also</span><b>Peer tutor, office assistant, club treasurer, event organizer</b></div>
+                        </div>
+                        <p class="about-note">I care about building software that feels approachable. Whether I am tutoring someone through a concept or shipping a project under a deadline, I try to bring patience, curiosity, and a little bit of style into the work.</p>
+                    </div>
+                </section>
+                <div class="action-row">
+                    <button class="win-button" data-command="projects" type="button">Open Projects.exe</button>
+                    <button class="win-button" data-command="resume" type="button">Open Resume</button>
+                    <button class="win-button" data-command="contact" type="button">Contact Me</button>
+                </div>
+            `,
+        },
+        education: {
+            title: "Education.doc",
+            content: `
+                <section class="popup-hero">
+                    <span class="popup-hero-icon icon-education" aria-hidden="true"></span>
+                    <div>
+                        <p class="popup-kicker">Education</p>
+                        <h2 class="popup-hero-title">Academic Background</h2>
+                        <p class="popup-hero-text">Computer Science student at Dakota State University with earlier academic and leadership foundations from Kathmandu Model Secondary School.</p>
+                    </div>
+                </section>
+                <section class="education-stack">
+                    <article class="education-card education-card-primary">
+                        <div>
+                            <p class="education-label">University</p>
+                            <h3 class="education-title">Dakota State University</h3>
+                            <p class="education-degree">Computer Science Honors</p>
+                            <p class="education-copy">Building a strong foundation in software development, cybersecurity, systems thinking, and practical problem solving through coursework, tutoring, campus work, and technical projects.</p>
+                        </div>
+                        <div class="education-meta">
+                            <span>Madison, South Dakota</span>
+                            <span>Aug 2024-Feb 2028</span>
+                            <span>GPA: 4.0</span>
+                        </div>
+                    </article>
+
+                    <article class="education-card">
+                        <div>
+                            <p class="education-label">High School</p>
+                            <h3 class="education-title">Kathmandu Model Secondary School</h3>
+                            <p class="education-degree">Secondary Studies</p>
+                            <p class="education-copy">Developed early technical curiosity through computer club work, coding events, hackathons, student committee involvement, and editorial leadership.</p>
+                        </div>
+                        <div class="education-meta">
+                            <span>Kathmandu, Nepal</span>
+                            <span>Aug 2021-Aug 2023</span>
+                        </div>
+                    </article>
+                </section>
+                <section class="education-highlights">
+                    <article class="popup-card">
+                        <h3 class="popup-card-title">Academic Focus</h3>
+                        <p class="popup-card-text">Computer science, web development, cybersecurity, object-oriented design, and practical software projects.</p>
+                    </article>
+                    <article class="popup-card">
+                        <h3 class="popup-card-title">Campus Learning</h3>
+                        <p class="popup-card-text">Peer tutoring and office assistant work strengthened communication, reliability, support skills, and day-to-day operational discipline.</p>
+                    </article>
+                    <article class="popup-card">
+                        <h3 class="popup-card-title">Early Leadership</h3>
+                        <p class="popup-card-text">Computer club, student committee, and editors club roles helped shape event organization, teamwork, and writing skills.</p>
+                    </article>
+                </section>
+            `,
+        },
+        experience: {
+            title: "Experience.log",
+            content: `
+                <section class="popup-hero">
+                    <span class="popup-hero-icon icon-experience" aria-hidden="true"></span>
+                    <div>
+                        <p class="popup-kicker">Experience</p>
+                        <h2 class="popup-hero-title">Work + Leadership</h2>
+                        <p class="popup-hero-text">Campus operations, peer tutoring, student organization leadership, computer club work, and editorial experience.</p>
+                    </div>
+                </section>
+                <section class="experience-list">
+                    <details class="experience-card" open>
+                        <summary>
+                            <span class="experience-icon icon-experience"></span>
+                            <span><b>Office Assistant</b><small>Dakota State University</small></span>
+                            <time>Apr 2026-Present</time>
+                        </summary>
+                        <div class="experience-body">
+                            <p>Support daily front-office operations by keeping information accurate, requests moving, and communication clear for students, staff, and campus visitors.</p>
+                            <ul>
+                                <li>Perform accurate data entry and help maintain key office databases.</li>
+                                <li>Assist with work order processing, phone support, campus information, and vehicle reservations.</li>
+                                <li>Handle sensitive information with confidentiality, consistency, and attention to detail.</li>
+                            </ul>
+                        </div>
+                    </details>
+                    <details class="experience-card">
+                        <summary>
+                            <span class="experience-icon icon-education"></span>
+                            <span><b>Peer Tutor</b><small>Dakota State University</small></span>
+                            <time>Aug 2025-Present</time>
+                        </summary>
+                        <div class="experience-body">
+                            <p>Provide one-to-one academic support for students by breaking course material into clearer steps and adapting explanations to different learning styles.</p>
+                            <ul>
+                                <li>Help peers strengthen understanding of class concepts through guided problem solving.</li>
+                                <li>Practice patient technical communication and active listening.</li>
+                                <li>Build confidence by helping students move from stuck to self-sufficient.</li>
+                            </ul>
+                        </div>
+                    </details>
+                    <details class="experience-card">
+                        <summary>
+                            <span class="experience-icon icon-contact"></span>
+                            <span><b>Treasurer</b><small>DSU International Club</small></span>
+                            <time>Aug 2024-Present</time>
+                        </summary>
+                        <div class="experience-body">
+                            <p>Help manage club funds and event budgets for an organization focused on international student community, cultural programming, and campus connection.</p>
+                            <ul>
+                                <li>Track allocated budgets for events and club activities.</li>
+                                <li>Support planning decisions with practical cost awareness.</li>
+                                <li>Collaborate with club members to keep events organized and financially realistic.</li>
+                            </ul>
+                        </div>
+                    </details>
+                    <details class="experience-card">
+                        <summary>
+                            <span class="experience-icon icon-projects"></span>
+                            <span><b>Executive Member</b><small>KMC Computer Club</small></span>
+                            <time>Aug 2021-Aug 2023</time>
+                        </summary>
+                        <div class="experience-body">
+                            <p>Contributed to a student technology community that organized events and programs including FunFest, Code Camp, Hackathon, and student committee initiatives.</p>
+                            <ul>
+                                <li>Helped coordinate technical and student engagement events.</li>
+                                <li>Worked with teammates on planning, logistics, and event execution.</li>
+                                <li>Developed early interest in web development, programming, and community learning.</li>
+                            </ul>
+                        </div>
+                    </details>
+                    <details class="experience-card">
+                        <summary>
+                            <span class="experience-icon icon-skills"></span>
+                            <span><b>Secretary</b><small>KMCSC Editors Club</small></span>
+                            <time>Aug 2021-Aug 2023</time>
+                        </summary>
+                        <div class="experience-body">
+                            <p>Supported article publication and school magazine work while strengthening writing, editing, organization, and communication skills.</p>
+                            <ul>
+                                <li>Helped prepare written content for publication.</li>
+                                <li>Balanced editorial detail with deadlines and coordination.</li>
+                                <li>Improved written communication, structure, and review habits.</li>
+                            </ul>
+                        </div>
+                    </details>
+                </section>
+            `,
+        },
+        projects: {
+            title: "Projects.exe",
+            content: `
+                <section class="popup-hero">
+                    <span class="popup-hero-icon icon-projects" aria-hidden="true"></span>
+                    <div>
+                        <p class="popup-kicker">Featured Projects</p>
+                        <h2 class="popup-hero-title">GitHub Project Gallery</h2>
+                        <p class="popup-hero-text">Selected work from my GitHub across AI planning, music analysis, movie tools, games, coursework, and portfolio experiments.</p>
+                    </div>
+                </section>
+                <section class="project-list">
+                    <article class="project-card">
+                        <div class="project-image-frame"><img class="project-image" src="Projects/terminal-quest.png" alt="Terminal Quest project screenshot" loading="lazy"></div>
+                        <div class="project-content">
+                            <p class="project-kicker">Interactive Learning Platform</p>
+                            <h3 class="project-title">Terminal Quest</h3>
+                            <p class="project-meta">A browser-based terminal dungeon RPG that teaches beginner Linux commands through exploration instead of lectures. I mapped file-system concepts into game mechanics: rooms behave like directories, doors behave like folders, and collectible items behave like files.</p>
+                            <p class="project-detail">The build combines typed frontend state, custom command parsing, game progression, and Supabase-backed persistence into a learning experience that feels more like playing than studying.</p>
+                            <div class="project-tags"><span>TypeScript</span><span>React</span><span>Supabase</span><span>Command Parser</span><span>AI Fallback</span><span>Game UI</span></div>
+                            <div class="action-row">
+                                <a class="win-button" href="https://github.com/MrFiscus/TerminalQuest" target="_blank" rel="noreferrer">GitHub</a>
+                                <a class="win-button" href="https://terminalquest-puce.vercel.app" target="_blank" rel="noreferrer">Live Site</a>
+                            </div>
+                        </div>
+                    </article>
+                    <article class="project-card">
+                        <div class="project-image-frame"><img class="project-image" src="Projects/handall.png" alt="HandAll project screenshot" loading="lazy"></div>
+                        <div class="project-content">
+                            <p class="project-kicker">AI Productivity Tool</p>
+                            <h3 class="project-title">HandAll</h3>
+                            <p class="project-meta">An AI-supported student planner focused on classes, assignments, routines, goals, calendar imports, motivation tracking, and assistant-guided planning. The product direction is built around helping students convert messy obligations into actionable schedules.</p>
+                            <p class="project-detail">The app is shaped around real student time-management pain points, with backend routes, planning logic, and AI-assisted flows working together to make schedules easier to act on.</p>
+                            <div class="project-tags"><span>TypeScript</span><span>FastAPI</span><span>AI Planner</span><span>Calendar Logic</span><span>Hackathon Build</span></div>
+                            <div class="action-row">
+                                <a class="win-button" href="https://github.com/MrFiscus/HandAll" target="_blank" rel="noreferrer">GitHub</a>
+                            </div>
+                        </div>
+                    </article>
+                    <article class="project-card">
+                        <div class="project-image-frame"><img class="project-image" src="Projects/How-performativeami.png" alt="How Performative Am I project screenshot" loading="lazy"></div>
+                        <div class="project-content">
+                            <p class="project-kicker">Music Data App</p>
+                            <h3 class="project-title">How Performative Am I?</h3>
+                            <p class="project-meta">A Spotify-powered web app that analyzes listening behavior and turns it into a playful "performative" score with artist breakdowns and shareable results. The project blends API integration, authentication, visual feedback, and a strong social hook.</p>
+                            <p class="project-detail">Behind the playful concept is a full OAuth flow, Spotify data handling, scoring logic, and a public-facing interface designed to make personal music data instantly understandable.</p>
+                            <div class="project-tags"><span>React</span><span>TypeScript</span><span>Spotify API</span><span>OAuth PKCE</span><span>Data UI</span><span>Public Launch</span></div>
+                            <div class="action-row">
+                                <a class="win-button" href="https://github.com/MrFiscus/howperformativeami" target="_blank" rel="noreferrer">GitHub</a>
+                                <a class="win-button" href="https://www.howperformativeami.com/" target="_blank" rel="noreferrer">Live Site</a>
+                            </div>
+                        </div>
+                    </article>
+                    <article class="project-card">
+                        <div class="project-image-frame"><img class="project-image" src="Projects/fiscus-films.png" alt="Fiscus Films project screenshot" loading="lazy"></div>
+                        <div class="project-content">
+                            <p class="project-kicker">Movie Discovery Platform</p>
+                            <h3 class="project-title">Fiscus Films</h3>
+                            <p class="project-meta">A movie discovery and watchlist application with TMDB proxying, user profiles, favorites, search history, Supabase auth/storage, and Socket.IO realtime events. The app focuses on making film discovery feel fast, personal, and interactive.</p>
+                            <p class="project-detail">The system uses backend routes to protect API calls, realtime events for interaction, authentication for user sessions, and persistent storage for favorites, profiles, and search history.</p>
+                            <div class="project-tags"><span>JavaScript</span><span>Express</span><span>Socket.IO</span><span>Supabase</span><span>TMDB API</span><span>Auth</span></div>
+                            <div class="action-row">
+                                <a class="win-button" href="https://github.com/MrFiscus/FiscusFilms" target="_blank" rel="noreferrer">GitHub</a>
+                                <a class="win-button" href="https://fiscusfilms.vercel.app" target="_blank" rel="noreferrer">Live Site</a>
+                            </div>
+                        </div>
+                    </article>
+                    <article class="project-card">
+                        <div class="project-image-frame"><img class="project-image" src="Projects/cine-list.png" alt="CineList project screenshot" loading="lazy"></div>
+                        <div class="project-content">
+                            <p class="project-kicker">Personal Media Tracker</p>
+                            <h3 class="project-title">CineList</h3>
+                            <p class="project-meta">A personalized movie tracker for logging films by country, built around the idea that watch history can be explored through geography and culture instead of only ratings or genres.</p>
+                            <p class="project-detail">The idea pushes beyond a basic list app by organizing watch history around place and culture, giving the interface a clearer point of view than a generic movie tracker.</p>
+                            <div class="project-tags"><span>CSS</span><span>JavaScript</span><span>Movie Tracker</span><span>Frontend UI</span><span>Product Design</span></div>
+                            <div class="action-row">
+                                <a class="win-button" href="https://github.com/MrFiscus/CineList" target="_blank" rel="noreferrer">GitHub</a>
+                            </div>
+                        </div>
+                    </article>
+                    <article class="project-card">
+                        <div class="project-image-frame"><img class="project-image project-image-weather" src="Projects/weather-app.png" alt="Weather App OOD project screenshot" loading="lazy"></div>
+                        <div class="project-content">
+                            <p class="project-kicker">Object-Oriented Coursework</p>
+                            <h3 class="project-title">Weather App OOD</h3>
+                            <p class="project-meta">A C# weather application created for Object-Oriented Design coursework. The emphasis is on organizing behavior into clear classes, practicing separation of concerns, and building maintainable application structure.</p>
+                            <p class="project-detail">The coursework focused on modeling behavior with readable classes, separating responsibilities cleanly, and practicing maintainable application structure in C#.</p>
+                            <div class="project-tags"><span>C#</span><span>Object-Oriented Design</span><span>Coursework</span><span>Class Structure</span></div>
+                            <div class="action-row">
+                                <a class="win-button" href="https://github.com/MrFiscus/weatherapp-OOD" target="_blank" rel="noreferrer">GitHub</a>
+                            </div>
+                        </div>
+                    </article>
+                    <article class="project-card">
+                        <div class="project-image-frame"><img class="project-image project-image-asm" src="Projects/asm-terminal-game.png" alt="ASM Terminal Game project screenshot" loading="lazy"></div>
+                        <div class="project-content">
+                            <p class="project-kicker">Low-Level Programming</p>
+                            <h3 class="project-title">ASM Terminal Game</h3>
+                            <p class="project-meta">A terminal-based game made in Assembly and inspired by Pac-Man. It explores lower-level programming, game-loop thinking, character movement, terminal rendering, and retro interaction design.</p>
+                            <p class="project-detail">Working in Assembly meant building game behavior close to the machine, reasoning through movement and rendering manually, and solving problems without high-level framework shortcuts.</p>
+                            <div class="project-tags"><span>Assembly</span><span>Terminal Game</span><span>Game Loop</span><span>Low-Level Logic</span><span>Pac-Man Inspired</span></div>
+                            <div class="action-row">
+                                <a class="win-button" href="https://github.com/MrFiscus/asm_terminal_game" target="_blank" rel="noreferrer">GitHub</a>
+                            </div>
+                        </div>
+                    </article>
+                    <article class="project-card">
+                        <div class="project-image-frame"><img class="project-image" src="Projects/Rocket-car.png" alt="Rocketcar project screenshot" loading="lazy"></div>
+                        <div class="project-content">
+                            <p class="project-kicker">Unity Game Development</p>
+                            <h3 class="project-title">Rocketcar</h3>
+                            <p class="project-meta">A Unity game project built around flying cars and arcade-style movement. The project explores real-time player control, physics-based interaction, scene setup, and the process of building a playable game loop inside a game engine.</p>
+                            <p class="project-detail">The project expands my work into engine-based development, where interaction design depends on movement, physics, scene setup, and fast gameplay prototyping rather than static screens.</p>
+                            <div class="project-tags"><span>Unity</span><span>Game Development</span><span>Physics</span><span>3D Gameplay</span><span>ASP.NET Repo Language</span></div>
+                            <div class="action-row">
+                                <a class="win-button" href="https://github.com/MrFiscus/rocketcar" target="_blank" rel="noreferrer">GitHub</a>
+                            </div>
+                        </div>
+                    </article>
+                    <article class="project-card">
+                        <div class="project-image-frame"><img class="project-image" src="https://opengraph.githubassets.com/fiscus-baller-3d/MrFiscus/Baller-3D" alt="Baller-3D GitHub preview" loading="lazy"></div>
+                        <div class="project-content">
+                            <p class="project-kicker">Unity 3D Game</p>
+                            <h3 class="project-title">Baller-3D</h3>
+                            <p class="project-meta">A Unity game featuring 3D ball mechanics and interactive gameplay. It focuses on movement, object behavior, level interaction, and learning how to structure a small game project inside Unity.</p>
+                            <p class="project-detail">This was practice in shaping 3D controls, building playable scenes, and learning how small gameplay systems respond to user input inside Unity.</p>
+                            <div class="project-tags"><span>Unity</span><span>3D Game</span><span>Gameplay Systems</span><span>Player Controls</span><span>ASP.NET Repo Language</span></div>
+                            <div class="action-row">
+                                <a class="win-button" href="https://github.com/MrFiscus/Baller-3D" target="_blank" rel="noreferrer">GitHub</a>
+                            </div>
+                        </div>
+                    </article>
+                    <article class="project-card">
+                        <div class="project-image-frame"><img class="project-image" src="Projects/Vsn-competition.png" alt="Vsn-Competition project screenshot" loading="lazy"></div>
+                        <div class="project-content">
+                            <p class="project-kicker">Winning Web Dev Competition</p>
+                            <h3 class="project-title">Vsn-Competition</h3>
+                            <p class="project-meta">A complete website built during a web development competition that I won, delivered from concept to finished site in about 5 hours. The project reflects fast execution, practical design decisions, and the ability to ship under real time pressure.</p>
+                            <p class="project-detail">The 5-hour deadline forced quick scoping, fast design decisions, focused frontend implementation, and a finished result polished enough to win the competition.</p>
+                            <div class="project-tags"><span>Web Development</span><span>Competition Winner</span><span>5-Hour Build</span><span>Frontend</span><span>Rapid Prototyping</span></div>
+                            <div class="action-row">
+                                <a class="win-button" href="https://github.com/MrFiscus/Vsn-Competition" target="_blank" rel="noreferrer">GitHub</a>
+                            </div>
+                        </div>
+                    </article>
+                    <article class="project-card">
+                        <div class="project-image-frame"><img class="project-image" src="Projects/fiscus-terminal.png" alt="Fiscus Terminal project screenshot" loading="lazy"></div>
+                        <div class="project-content">
+                            <p class="project-kicker">Portfolio Interface</p>
+                            <h3 class="project-title">Fiscus Terminal</h3>
+                            <p class="project-meta">A static portfolio website that turns a resume into a Windows 95-inspired desktop with terminal commands, draggable windows, popup apps, a taskbar, resume viewer, and responsive mobile behavior.</p>
+                            <p class="project-detail">The site keeps everything static and GitHub Pages-friendly while still supporting draggable windows, terminal commands, responsive behavior, and a portfolio experience with personality.</p>
+                            <div class="project-tags"><span>HTML</span><span>CSS</span><span>JavaScript</span><span>Static Site</span><span>GitHub Pages</span><span>Responsive UI</span></div>
+                            <div class="action-row">
+                                <a class="win-button" href="https://github.com/MrFiscus/fiscus-terminal" target="_blank" rel="noreferrer">GitHub</a>
+                            </div>
+                        </div>
+                    </article>
+                </section>
+            `,
+        },
+        skills: {
+            title: "Skills.ini",
+            content: `
+                <section class="popup-hero">
+                    <span class="popup-hero-icon icon-skills" aria-hidden="true"></span>
+                    <div>
+                        <p class="popup-kicker">Technical Skills</p>
+                        <h2 class="popup-hero-title">Toolbox</h2>
+                        <p class="popup-hero-text">A practical mix of skills reflected across my GitHub projects: web apps, APIs, data structures, C#/C++ coursework, Assembly games, and Unity-style experiments.</p>
+                    </div>
+                </section>
+                <section class="skills-console">
+                    <div class="skills-sidebar">
+                        <button class="skill-tab is-active" data-skill-tab="frontend" type="button">Frontend</button>
+                        <button class="skill-tab" data-skill-tab="backend" type="button">Backend</button>
+                        <button class="skill-tab" data-skill-tab="security" type="button">Security</button>
+                        <button class="skill-tab" data-skill-tab="cs" type="button">CS/Game</button>
+                        <button class="skill-tab" data-skill-tab="people" type="button">People</button>
+                    </div>
+                    <div class="skills-panel">
+                        <article class="skill-group is-active" data-skill-panel="frontend">
+                            <div class="skill-group-header">
+                                <span class="skill-group-icon icon-projects" aria-hidden="true"></span>
+                                <div>
+                                    <h3>Frontend + UI</h3>
+                                    <p>Building interfaces that are usable, memorable, and responsive.</p>
+                                </div>
+                            </div>
+                            <div class="skill-breakdown">
+                                <div class="skill-row"><span>HTML</span><div class="meter-track"><div class="meter-fill meter-fill-teal" style="width: 92%"></div></div><b>Strong</b></div>
+                                <div class="skill-row"><span>CSS</span><div class="meter-track"><div class="meter-fill meter-fill-teal" style="width: 88%"></div></div><b>Strong</b></div>
+                                <div class="skill-row"><span>JavaScript</span><div class="meter-track"><div class="meter-fill meter-fill-teal" style="width: 84%"></div></div><b>Strong</b></div>
+                                <div class="skill-row"><span>TypeScript</span><div class="meter-track"><div class="meter-fill meter-fill-teal" style="width: 74%"></div></div><b>Growing</b></div>
+                                <div class="skill-row"><span>React</span><div class="meter-track"><div class="meter-fill meter-fill-teal" style="width: 78%"></div></div><b>Comfortable</b></div>
+                                <div class="skill-row"><span>Responsive UI</span><div class="meter-track"><div class="meter-fill meter-fill-teal" style="width: 82%"></div></div><b>Strong</b></div>
+                                <div class="skill-row"><span>Static Sites</span><div class="meter-track"><div class="meter-fill meter-fill-teal" style="width: 86%"></div></div><b>Strong</b></div>
+                                <div class="skill-row"><span>Bootstrap</span><div class="meter-track"><div class="meter-fill meter-fill-teal" style="width: 72%"></div></div><b>Comfortable</b></div>
+                                <div class="skill-row"><span>Figma</span><div class="meter-track"><div class="meter-fill meter-fill-teal" style="width: 70%"></div></div><b>Growing</b></div>
+                            </div>
+                        </article>
+                        <article class="skill-group" data-skill-panel="backend">
+                            <div class="skill-group-header">
+                                <span class="skill-group-icon icon-terminal" aria-hidden="true"></span>
+                                <div>
+                                    <h3>Backend + APIs</h3>
+                                    <p>Connecting apps to services, auth, persistence, and external APIs.</p>
+                                </div>
+                            </div>
+                            <div class="skill-breakdown">
+                                <div class="skill-row"><span>FastAPI</span><div class="meter-track"><div class="meter-fill meter-fill-blue" style="width: 68%"></div></div><b>Growing</b></div>
+                                <div class="skill-row"><span>Express</span><div class="meter-track"><div class="meter-fill meter-fill-blue" style="width: 72%"></div></div><b>Comfortable</b></div>
+                                <div class="skill-row"><span>Supabase</span><div class="meter-track"><div class="meter-fill meter-fill-blue" style="width: 74%"></div></div><b>Comfortable</b></div>
+                                <div class="skill-row"><span>Socket.IO</span><div class="meter-track"><div class="meter-fill meter-fill-blue" style="width: 64%"></div></div><b>Growing</b></div>
+                                <div class="skill-row"><span>REST APIs</span><div class="meter-track"><div class="meter-fill meter-fill-blue" style="width: 76%"></div></div><b>Comfortable</b></div>
+                                <div class="skill-row"><span>Auth Flows</span><div class="meter-track"><div class="meter-fill meter-fill-blue" style="width: 66%"></div></div><b>Growing</b></div>
+                                <div class="skill-row"><span>Python</span><div class="meter-track"><div class="meter-fill meter-fill-blue" style="width: 76%"></div></div><b>Comfortable</b></div>
+                                <div class="skill-row"><span>Dockerfile</span><div class="meter-track"><div class="meter-fill meter-fill-blue" style="width: 48%"></div></div><b>Learning</b></div>
+                                <div class="skill-row"><span>PowerShell</span><div class="meter-track"><div class="meter-fill meter-fill-blue" style="width: 52%"></div></div><b>Learning</b></div>
+                                <div class="skill-row"><span>SQL</span><div class="meter-track"><div class="meter-fill meter-fill-blue" style="width: 68%"></div></div><b>Growing</b></div>
+                                <div class="skill-row"><span>Git/GitHub</span><div class="meter-track"><div class="meter-fill meter-fill-blue" style="width: 82%"></div></div><b>Strong</b></div>
+                            </div>
+                        </article>
+                        <article class="skill-group" data-skill-panel="security">
+                            <div class="skill-group-header">
+                                <span class="skill-group-icon icon-skills" aria-hidden="true"></span>
+                                <div>
+                                    <h3>Systems + Security</h3>
+                                    <p>Practicing lower-level thinking, CTF-style problem solving, and security fundamentals.</p>
+                                </div>
+                            </div>
+                            <div class="skill-breakdown">
+                                <div class="skill-row"><span>Cybersecurity</span><div class="meter-track"><div class="meter-fill meter-fill-gold" style="width: 70%"></div></div><b>Growing</b></div>
+                                <div class="skill-row"><span>Linux Commands</span><div class="meter-track"><div class="meter-fill meter-fill-gold" style="width: 76%"></div></div><b>Comfortable</b></div>
+                                <div class="skill-row"><span>Assembly</span><div class="meter-track"><div class="meter-fill meter-fill-gold" style="width: 58%"></div></div><b>Learning</b></div>
+                                <div class="skill-row"><span>C#</span><div class="meter-track"><div class="meter-fill meter-fill-gold" style="width: 64%"></div></div><b>Growing</b></div>
+                                <div class="skill-row"><span>OOD</span><div class="meter-track"><div class="meter-fill meter-fill-gold" style="width: 68%"></div></div><b>Growing</b></div>
+                                <div class="skill-row"><span>CTF Practice</span><div class="meter-track"><div class="meter-fill meter-fill-gold" style="width: 72%"></div></div><b>Active</b></div>
+                                <div class="skill-row"><span>Data Structures</span><div class="meter-track"><div class="meter-fill meter-fill-gold" style="width: 70%"></div></div><b>Growing</b></div>
+                                <div class="skill-row"><span>Algorithms</span><div class="meter-track"><div class="meter-fill meter-fill-gold" style="width: 64%"></div></div><b>Growing</b></div>
+                                <div class="skill-row"><span>Networking Basics</span><div class="meter-track"><div class="meter-fill meter-fill-gold" style="width: 62%"></div></div><b>Learning</b></div>
+                                <div class="skill-row"><span>Command Line</span><div class="meter-track"><div class="meter-fill meter-fill-gold" style="width: 74%"></div></div><b>Comfortable</b></div>
+                            </div>
+                        </article>
+                        <article class="skill-group" data-skill-panel="cs">
+                            <div class="skill-group-header">
+                                <span class="skill-group-icon icon-projects" aria-hidden="true"></span>
+                                <div>
+                                    <h3>CS Coursework + Game Projects</h3>
+                                    <p>Languages and concepts that show up in coursework, tree assignments, calculators, terminal games, and Unity-style repos.</p>
+                                </div>
+                            </div>
+                            <div class="skill-breakdown">
+                                <div class="skill-row"><span>C++</span><div class="meter-track"><div class="meter-fill meter-fill-gold" style="width: 70%"></div></div><b>Growing</b></div>
+                                <div class="skill-row"><span>Splay Trees</span><div class="meter-track"><div class="meter-fill meter-fill-gold" style="width: 66%"></div></div><b>Coursework</b></div>
+                                <div class="skill-row"><span>DSW Algorithm</span><div class="meter-track"><div class="meter-fill meter-fill-gold" style="width: 62%"></div></div><b>Coursework</b></div>
+                                <div class="skill-row"><span>C#</span><div class="meter-track"><div class="meter-fill meter-fill-gold" style="width: 68%"></div></div><b>Growing</b></div>
+                                <div class="skill-row"><span>ASP.NET Repo Work</span><div class="meter-track"><div class="meter-fill meter-fill-blue" style="width: 58%"></div></div><b>Learning</b></div>
+                                <div class="skill-row"><span>Unity Game Concepts</span><div class="meter-track"><div class="meter-fill meter-fill-teal" style="width: 60%"></div></div><b>Learning</b></div>
+                                <div class="skill-row"><span>Assembly</span><div class="meter-track"><div class="meter-fill meter-fill-gold" style="width: 58%"></div></div><b>Learning</b></div>
+                                <div class="skill-row"><span>Makefile Basics</span><div class="meter-track"><div class="meter-fill meter-fill-blue" style="width: 50%"></div></div><b>Learning</b></div>
+                            </div>
+                        </article>
+                        <article class="skill-group" data-skill-panel="people">
+                            <div class="skill-group-header">
+                                <span class="skill-group-icon icon-contact" aria-hidden="true"></span>
+                                <div>
+                                    <h3>People + Operations</h3>
+                                    <p>Supporting students, handling office workflows, organizing events, and communicating clearly.</p>
+                                </div>
+                            </div>
+                            <div class="skill-breakdown">
+                                <div class="skill-row"><span>Customer Service</span><div class="meter-track"><div class="meter-fill meter-fill-teal" style="width: 90%"></div></div><b>Strong</b></div>
+                                <div class="skill-row"><span>Office Operations</span><div class="meter-track"><div class="meter-fill meter-fill-teal" style="width: 86%"></div></div><b>Strong</b></div>
+                                <div class="skill-row"><span>Microsoft Office</span><div class="meter-track"><div class="meter-fill meter-fill-teal" style="width: 84%"></div></div><b>Strong</b></div>
+                                <div class="skill-row"><span>Peer Tutoring</span><div class="meter-track"><div class="meter-fill meter-fill-teal" style="width: 82%"></div></div><b>Strong</b></div>
+                                <div class="skill-row"><span>Event Support</span><div class="meter-track"><div class="meter-fill meter-fill-teal" style="width: 78%"></div></div><b>Comfortable</b></div>
+                                <div class="skill-row"><span>Writing</span><div class="meter-track"><div class="meter-fill meter-fill-teal" style="width: 80%"></div></div><b>Strong</b></div>
+                                <div class="skill-row"><span>Team Collaboration</span><div class="meter-track"><div class="meter-fill meter-fill-teal" style="width: 86%"></div></div><b>Strong</b></div>
+                                <div class="skill-row"><span>Documentation</span><div class="meter-track"><div class="meter-fill meter-fill-teal" style="width: 78%"></div></div><b>Comfortable</b></div>
+                                <div class="skill-row"><span>Problem Solving</span><div class="meter-track"><div class="meter-fill meter-fill-teal" style="width: 84%"></div></div><b>Strong</b></div>
+                            </div>
+                        </article>
+                    </div>
+                </section>
+            `,
+        },
+        achievements: {
+            title: "Achievements.dat",
+            content: `
+                <section class="popup-hero">
+                    <span class="popup-hero-icon icon-achievements" aria-hidden="true"></span>
+                    <div>
+                        <p class="popup-kicker">Competitions</p>
+                        <h2 class="popup-hero-title">Recent Results</h2>
+                        <p class="popup-hero-text">CTFs, hackathons, and team competitions that shaped how I build under pressure.</p>
+                    </div>
+                </section>
+                <section class="timeline-list">
+                    <article class="timeline-item"><div><h3 class="timeline-title">HiveCTF</h3><p class="timeline-meta">Competitor - 1st Place</p></div><span class="timeline-date">Feb 2026</span></article>
+                    <article class="timeline-item"><div><h3 class="timeline-title">Ignite Hackathon</h3><p class="timeline-meta">Full Stack Developer - Terminal Quest</p></div><span class="timeline-date">Apr 2026</span></article>
+                    <article class="timeline-item"><div><h3 class="timeline-title">Nepal-US Hackathon</h3><p class="timeline-meta">Lead Backend / AI Developer</p></div><span class="timeline-date">Feb 2026</span></article>
+                    <article class="timeline-item"><div><h3 class="timeline-title">NCAE Cyber Games Regionals</h3><p class="timeline-meta">Database and Router - 5th Place</p></div><span class="timeline-date">Feb 2026</span></article>
+                </section>
+            `,
+        },
+        contact: {
+            title: "Contact.msg",
+            content: `
+                <section class="popup-hero">
+                    <span class="popup-hero-icon icon-contact" aria-hidden="true"></span>
+                    <div>
+                        <p class="popup-kicker">Contact</p>
+                        <h2 class="popup-hero-title">Let's Connect</h2>
+                        <p class="popup-hero-text">Send a quick message or pick a channel below. These tiles behave like old desktop shortcuts, just less dusty.</p>
+                    </div>
+                </section>
+                <form class="mail-composer" action="mailto:contact.smaranpokharel@gmail.com" method="post" enctype="text/plain">
+                    <div class="mail-toolbar">
+                        <button class="win-button mail-send-button" type="submit">
+                            <span class="mail-button-icon icon-contact" aria-hidden="true"></span>
+                            Send
+                        </button>
+                    </div>
+                    <div class="mail-paper">
+                        <h3 class="mail-title">New Message</h3>
+                        <label class="mail-row">
+                            <span>To:</span>
+                            <input type="text" name="to" value="Smaran Pokharel <contact.smaranpokharel@gmail.com>" readonly>
+                        </label>
+                        <label class="mail-row">
+                            <span>Subject:</span>
+                            <input type="text" name="subject" placeholder="Portfolio inquiry">
+                        </label>
+                        <label class="mail-row">
+                            <span>From:</span>
+                            <input type="email" name="from" placeholder="your.email@example.com">
+                        </label>
+                        <textarea class="mail-message" name="body" placeholder="Hi Smaran, I saw your portfolio and wanted to reach out about..."></textarea>
+                    </div>
+                </form>
+                <section class="contact-grid">
+                    <a class="contact-card" href="tel:+17814756319"><span class="contact-card-icon icon-phone" aria-hidden="true"></span><span><p class="contact-label">Phone</p><p class="contact-value">+1 781 475 6319</p></span></a>
+                    <a class="contact-card" href="https://github.com/MrFiscus" target="_blank" rel="noreferrer"><span class="contact-card-icon icon-github" aria-hidden="true"></span><span><p class="contact-label">GitHub</p><p class="contact-value">github.com/MrFiscus</p></span></a>
+                    <a class="contact-card" href="https://www.linkedin.com/in/smaran-pokharel-12a720305/" target="_blank" rel="noreferrer"><span class="contact-card-icon icon-linkedin" aria-hidden="true"></span><span><p class="contact-label">LinkedIn</p><p class="contact-value">linkedin.com/in/smaran-pokharel</p></span></a>
+                </section>
+            `,
+        },
+        resume: {
+            title: "Résumé",
+            content: `
+                <div class="resume-viewer">
+                    <div class="resume-toolbar" role="toolbar" aria-label="Resume actions">
+                        <a class="resume-toolbar-button" href="${resumePdf}" download="Smaran-Pokharel-Resume.pdf">
+                            <span class="resume-toolbar-icon icon-resume" aria-hidden="true"></span>
+                            Download
+                        </a>
+                        <a class="resume-toolbar-button" href="${resumePdf}" target="_blank" rel="noreferrer">
+                            <span class="resume-toolbar-icon icon-github" aria-hidden="true"></span>
+                            Open In New Tab
+                        </a>
+                    </div>
+                    <div class="resume-frame-wrap">
+                        <iframe class="resume-frame" src="${resumePdf}#toolbar=0&navpanes=0" title="Resume PDF"></iframe>
                     </div>
                 </div>
-            `);
-        },
-        skills: () => {
-            appendOutput("Showing my skills");
-            createPopup("My Skills", `<div class="skills-popup">
-  <ul>
-    <li>
-      <b>HTML & CSS </b>
-      <div class="progress-bar-container">
-        <div class="progress-bar" style="width: 97%;"></div> <!-- Adjust width percentage as needed -->
-      </div>
-    </li>
-    <li>
-      <b>JavaScript</b>
-      <div class="progress-bar-container">
-        <div class="progress-bar" style="width: 85%;"></div> <!-- Adjust width percentage as needed -->
-      </div>
-    </li>
-    <li>
-      <b>C programming</b>
-      <div class="progress-bar-container">
-        <div class="progress-bar" style="width: 80%;"></div> <!-- Adjust width percentage as needed -->
-      </div>
-    </li>
-    <li>
-      <b>Python</b>
-      <div class="progress-bar-container">
-        <div class="progress-bar" style="width: 60%;"></div> <!-- Adjust width percentage as needed -->
-      </div>
-    </li>
-    <li>
-      <b>React.JS</b>
-      <div class="progress-bar-container">
-        <div class="progress-bar" style="width: 40%;"></div> <!-- Adjust width percentage as needed -->
-      </div>
-      <li>
-      <b>Photoshop</b>
-      <div class="progress-bar-container">
-        <div class="progress-bar" style="width: 89%;"></div> <!-- Adjust width percentage as needed -->
-      </div>
-    </li>
-    <li>
-      <b>Figma</b>
-      <div class="progress-bar-container">
-        <div class="progress-bar" style="width: 90%;"></div> <!-- Adjust width percentage as needed -->
-      </div>
-    </li>
-    <li>
-      <b>PhP</b>
-      <div class="progress-bar-container">
-        <div class="progress-bar" style="width: 65%;"></div> <!-- Adjust width percentage as needed -->
-      </div>
-    </li>
-    <li>
-      <b>WordPress</b>
-      <div class="progress-bar-container">
-        <div class="progress-bar" style="width: 85%;"></div> <!-- Adjust width percentage as needed -->
-      </div>
-    </li>
-    </li>
-    <!-- Add more skills here -->
-  </ul>
-</div>
-`);
-        },
-        projects: () => {
-            appendOutput("Showing my projects");
-            createPopup("My Projects",
-        `
-        <div class="projects-popup">
-            <ul>
-        <li><b>Game-Rocket Car:</b> A game developed in Unity which can be played on all Windows devices. <a href="https://www.youtube.com/watch?v=gQt55cHJV5k" target="_blank">View</a></li>
-        <li><b>Game-Baller-3D:</b> Baller 3D is a development-build game created using Unity. <a href="https://drive.google.com/drive/folders/1mZSmtIMe8XmL99R21g24NbrHEe64fnt4?usp=sharing" target="_blank">View</a></li>
-        <li><b>Delta.co:</b> A practice website built for the Delta.co company. <a href="https://mrfiscus.github.io/project-1/" target="_blank">View</a></li>
-        <li><b>Fiscus Films:</b> A movie streaming site design created by Fiscus. <a href="https://mrfiscus.github.io/Fiscusfilms/" target="_blank">View</a></li>
-        
-        <li><b>KMC Website:</b> A recreated website built during a 2-hour web design competition. <a href="https://vsn-final.netlify.app/" target="_blank">View</a></li>
-        <li><b>Reck.co:</b> A recreated website built for practicing JavaScript. <a href="https://mrfiscus.github.io/project-2/" target="_blank">View</a></li>
-        <li><b>Dice Game:</b> A fun dice game developed in JS. <a href="https://mrfiscus.github.io/Dice-Game/" target="_blank">View</a></li>
-         <li><b>Biruwa:</b> A concept for plantation app that monitors your plants.<a href="https://mrfiscus.github.io/Biruwa/" target="_blank">View</a></li>
-         <li><b>Windows Portfolio:</b> A windows 95 themed portfolio website.<a href="https://github.com/MrFiscus/Fiscus-95" target="_blank">View</a></li>
-  
-            </ul>
-        </div>
-        `
-            );    
-        },
-        contact: () => {
-            appendOutput("Showing my contact information");
-            createPopup(  "Contact Me",
-                `
-                <div class="contact-popup">
-                    <p><span class="label">Email:</span> <span class="value"><a href="mailto:contact@smaranpokharel.com.np" target="_blank">contact@smaranpokharel@gmail.com</a></span></p>
-                    <p><span class="label">GitHub:</span> <a href="https://github.com/MrFiscus" target="_blank">github.com/MrFiscus</a></p>
-                    <p><span class="label">Facebook:</span> <a href="https://www.facebook.com/smaranpokharel.21/" target="_blank">facebook.com/smaranpokharel.21</a></p>
-                    <p><span class="label">Discord:</span> <span class="value">mrfiscus</span></p>
-                    <p><span class="label">LinkedIn:</span> <a href="https://www.linkedin.com/in/smaran-pokharel-12a720305/" target="_blank">linkedin/smaranpokharel</a></p>
-                    <p><span class="label">Twitter:</span> <a href="https://x.com/shehates_fiscus" target="_blank">twitter.com/SmaranIam</a></p>
-                </div>
-                `);
-        },
-        resume: () => {
-            appendOutput("Showing my resume");
-            createPopup(
-                "My Resume",
-                `
-                <p>You can view my resume below:</p>
-                <iframe src="Resume.pdf" width="100%" height="500" style="border: none;"></iframe>
-                <p><a href="resume.pdf" download="My_Resume.pdf" style="color: #10b981; font-size: 20px; font-weight: bolder; text-decoration: underline;">Download Resume</a></p>
-                `
-            );
-        },
-        clear: () => {
-            location.reload(); 
+            `,
         },
     };
 
-    input.addEventListener("keypress", (e) => {
-        if (e.key === "Enter") {
-            const command = input.value.trim();
-            input.value = "";
+    input.addEventListener("keydown", (event) => {
+        if (event.key !== "Enter") {
+            return;
+        }
 
-            if (command in commands) {
-                appendOutput(command);
-                commands[command]();
-            } else {
-                appendOutput(`Unknown command: ${command}`);
-            }
+        const command = input.value.trim().toLowerCase();
+        input.value = "";
+
+        if (!command) {
+            return;
+        }
+
+        flashTerminalInput();
+        runCommand(command);
+    });
+
+    startButton?.addEventListener("click", (event) => {
+        event.stopPropagation();
+        toggleStartMenu();
+    });
+
+    window.handleWindowButton = (control) => {
+        handleWindowAction(control);
+    };
+
+    document.addEventListener("click", (event) => {
+        const windowControl = event.target.closest("[data-window-action]");
+        if (windowControl) {
+            event.preventDefault();
+            event.stopPropagation();
+            handleWindowAction(windowControl);
+            return;
+        }
+
+        const desktopIcon = event.target.closest(".desktop-icon");
+        if (desktopIcon) {
+            selectDesktopIcon(desktopIcon);
+        }
+
+        const skillTab = event.target.closest("[data-skill-tab]");
+        if (skillTab) {
+            event.preventDefault();
+            switchSkillTab(skillTab);
+            return;
+        }
+
+        const copyCommand = event.target.closest("[data-copy-command]");
+        if (copyCommand) {
+            event.preventDefault();
+            fillTerminalCommand(copyCommand.dataset.copyCommand);
+            return;
+        }
+
+        const trigger = event.target.closest("[data-command]");
+
+        if (trigger) {
+            runCommand(trigger.dataset.command);
+            closeStartMenu();
+            return;
+        }
+
+        if (!event.target.closest("#start-menu") && !event.target.closest("#start-button")) {
+            closeStartMenu();
         }
     });
 
+    const terminalWindow = document.querySelector(".terminal-window");
+    if (terminalWindow) {
+        terminalWindow.dataset.windowTitle = "Portfolio Terminal";
+        terminalWindow.dataset.windowIcon = "icon-terminal";
+        makeDraggable(terminalWindow, ".window-titlebar");
+        registerWindow(terminalWindow);
+        bindWindowActivation(terminalWindow);
+        activateWindow(terminalWindow);
+    }
+
     function appendOutput(text) {
-        const output = document.createElement("p");
-        output.classList.add("output");
-        output.innerHTML = `<span class="prompt">guest@portfolio:~$</span> ${text}`;
-        outputArea.appendChild(output);
-        const inputLine = document.querySelector(".input-line");
-        outputArea.appendChild(inputLine);
+        const entry = document.createElement("p");
+        entry.className = "output";
+        entry.innerHTML = `<span class="terminal-prompt">guest@portfolio:~$</span> <span class="terminal-command-text">${escapeHtml(text)}</span>`;
+        outputArea.appendChild(entry);
         outputArea.scrollTop = outputArea.scrollHeight;
     }
 
-    function appendWelcomeMessage() {
-        const welcomeMessage = `
-            <pre class="name">
-█████ █   █  ███  ████   ███  █   █  ████   ███  █  █  █   █  ███  ████  █████ █     
-█     ██ ██ █   █ █   █ █   █ ██  █  █   █ █   █ █ █   █   █ █   █ █   █ █     █    
-█████ █ █ █ █████ ████  █████ █ █ █  ████  █   █ ██ █  █████ █████ ████  ████  █     
-    █ █   █ █   █ █   █ █   █ █  ██  █     █   █ █  █  █   █ █   █ █   █ █     █    
-█████ █   █ █   █ █   █ █   █ █   █  █      ███  █   █ █   █ █   █ █   █ █████ █████
-</pre>
-
-          
-            <p class="output"><span class="arrows">>></span> Welcome to my <span class="green-text">portfolio </span>website. Type the available commands:</p>
-            <p class="output"><span class="clickable-command" data-command="about"><b>about</b></span>: Information about me</p>
-            <p class="output"><span class="clickable-command" data-command="skills"><b>skills</b></span>: Show my skills</p>
-            <p class="output"><span class="clickable-command" data-command="projects"><b>projects</b></span>: Show my projects</p>
-            <p class="output"><span class="clickable-command" data-command="contact"><b>contact</b></span>: My contact information</p>
-            <p class="output"><span class="clickable-command" data-command="resume"><b>resume</b></span>: View and download my resume</p>
-            <p class="output"><span class="clickable-command" data-command="clear"><b>clear</b></span>: Clear the terminal</p>
-        `;
-        outputArea.innerHTML = welcomeMessage;
-        initializeClickableCommands(); // Reinitialize clickable commands
+    function appendLine(text = "", tone = "") {
+        const entry = document.createElement("p");
+        entry.className = `output terminal-line${tone ? ` terminal-line-${tone}` : ""}`;
+        entry.textContent = text;
+        outputArea.appendChild(entry);
+        outputArea.scrollTop = outputArea.scrollHeight;
     }
 
-    function createPopup(title, content) {
-        const popup = document.createElement("div");
-        popup.className = "draggable-popup";
-
-        popup.innerHTML = `
-            <div class="popup-header">
-                <span>${title}</span>
-                <div class="control-buttons">
-                    <span class="button maximize"></span>
-                    <span class="button minimize"></span>
-                    <span class="button close"></span>
-                </div>
-            </div>
-            <div class="popup-content">${content}</div>
-        `;
-
-        document.body.appendChild(popup);
-
-        let offsetX = 0;
-        let offsetY = 0;
-        let isDragging = false;
-
-        popup.querySelector(".popup-header").addEventListener("mousedown", (e) => {
-            isDragging = true;
-            offsetX = e.clientX - popup.offsetLeft;
-            offsetY = e.clientY - popup.offsetTop;
-        });
-
-        document.addEventListener("mousemove", (e) => {
-            if (isDragging) {
-                popup.style.left = e.clientX - offsetX + "px";
-                popup.style.top = e.clientY - offsetY + "px";
-            }
-        });
-
-        document.addEventListener("mouseup", () => {
-            isDragging = false;
-        });
-
-        popup.querySelector(".maximize").addEventListener("click", () => {
-            if (popup.classList.contains("maximized")) {
-                popup.style.width = "400px";
-                popup.style.height = "auto";
-                popup.style.top = "50px";
-                popup.style.left = "50px";
-                popup.classList.remove("maximized");
-            } else {
-                popup.style.width = "80vw";
-                popup.style.height = "80vh";
-                popup.style.top = "10%";
-                popup.style.left = "10%";
-                popup.classList.add("maximized");
-            }
-        });
-
-        popup.querySelector(".minimize").addEventListener("click", () => {
-            popup.style.display = "none";
-            const label = document.createElement("span");
-            label.className = "minimized-label";
-            label.textContent = title;
-            label.addEventListener("click", () => {
-                popup.style.display = "block";
-                label.remove();
-                addNewTabButton();
-            });
-            tabsContainer.insertBefore(label, tabsContainer.querySelector(".new-tab"));
-        });
-
-        popup.querySelector(".close").addEventListener("click", () => {
-            popup.remove();
-            addNewTabButton();
-        });
-
-        addNewTabButton();
+    function escapeHtml(text) {
+        return String(text)
+            .replaceAll("&", "&amp;")
+            .replaceAll("<", "&lt;")
+            .replaceAll(">", "&gt;")
+            .replaceAll('"', "&quot;")
+            .replaceAll("'", "&#039;");
     }
 
-    function addNewTabButton() {
-        let newTab = tabsContainer.querySelector(".new-tab");
+    function runCommand(command) {
+        const normalizedCommand = command.trim().toLowerCase();
 
-        if (!newTab) {
-            newTab = document.createElement("span");
-            newTab.className = "tab new-tab";
-            newTab.textContent = "+";
-            newTab.addEventListener("click", () => {
-                createPopup("New Popup", "Hello there! Welcome to smaranpokharel.com.np");
-            });
-            tabsContainer.appendChild(newTab);
-        } else {
-            newTab.remove();
-            tabsContainer.appendChild(newTab);
+        if (command === "terminal") {
+            restoreTerminal();
+            return;
+        }
+
+        if (normalizedCommand === "clear") {
+            clearTerminal();
+            return;
+        }
+
+        if (runTerminalEasterEgg(normalizedCommand)) {
+            return;
+        }
+
+        if (!commandPanels[normalizedCommand]) {
+            appendOutput(`Unknown command: ${command}`);
+            appendLine("Type 'help' to see available commands.", "error");
+            return;
+        }
+
+        appendOutput(normalizedCommand);
+        if (normalizedCommand === "help") {
+            printTerminalHelp();
+        }
+        openPopup(commandPanels[normalizedCommand].title, commandPanels[normalizedCommand].content, commandIcons[normalizedCommand]);
+    }
+
+    function printTerminalHelp() {
+        appendLine("Navigation: about | education | experience | projects | skills | contact | resume", "info");
+        appendLine("Terminal:   ls | whoami | date | clear | terminal", "success");
+        appendLine("Fun stuff:  sudo | coffee | theme | neofetch | konami", "warning");
+        appendLine("");
+    }
+
+    function runTerminalEasterEgg(command) {
+        const now = new Date();
+        const handlers = {
+            ls: () => [
+                "About.txt        Education.doc     Experience.log",
+                "Projects.exe     Skills.ini        Contact.msg",
+                "Resume.pdf       Terminal.exe      secrets/",
+            ],
+            dir: () => [
+                "ABOUT.TXT        EDUCATION.DOC     EXPERIENCE.LOG",
+                "PROJECTS.EXE     SKILLS.INI        CONTACT.MSG",
+                "RESUME.PDF       TERMINAL.EXE      SECRETS",
+            ],
+            whoami: () => ["guest@portfolio", "Access level: curious visitor"],
+            pwd: () => ["C:\\Portfolio\\Smaran\\Desktop"],
+            date: () => [now.toLocaleString()],
+            time: () => [now.toLocaleTimeString()],
+            neofetch: () => [
+                "SmaranOS 95",
+                "Host: Portfolio Terminal",
+                "Shell: curiosity.exe",
+                "Stack: HTML / CSS / JS / React / Python / C++",
+                "Theme: retro teal + terminal amber",
+            ],
+            theme: () => ["Theme locked: Windows 95-ish, but make it Smaran."],
+            sudo: () => ["Permission denied. Nice try though."],
+            "sudo hire smaran": () => ["Permission granted. Opening recruiter.exe... just kidding, email me."],
+            coffee: () => ["     )  (", "    (   ) )", "     ) ( (", "   _______        coffee.exe loaded", "  <_______>       productivity +12"],
+            konami: () => ["↑ ↑ ↓ ↓ ← → ← → B A", "Cheat unlocked: extra personality mode enabled."],
+            secrets: () => ["Hidden folder says: build cool things and document them well."],
+            "cd secrets": () => ["You found secrets/, but it is mostly unfinished project ideas."],
+        };
+
+        if (!handlers[command]) {
+            return false;
+        }
+
+        appendOutput(command);
+        const tone = command === "sudo" ? "error" : ["coffee", "konami", "theme"].includes(command) ? "warning" : "success";
+        handlers[command]().forEach((line) => appendLine(line, tone));
+        appendLine("");
+        return true;
+    }
+
+    function restoreTerminal() {
+        const terminalWindow = document.querySelector(".terminal-window");
+        if (!terminalWindow) {
+            return;
+        }
+
+        terminalWindow.classList.remove("is-closed", "is-minimized", "is-maximized");
+        removeTaskButton(terminalWindow);
+        activateWindow(terminalWindow);
+        input?.focus();
+    }
+
+    function switchSkillTab(tab) {
+        const consoleElement = tab.closest(".skills-console");
+        if (!consoleElement) {
+            return;
+        }
+
+        const target = tab.dataset.skillTab;
+        consoleElement.querySelectorAll("[data-skill-tab]").forEach((button) => {
+            button.classList.toggle("is-active", button === tab);
+        });
+
+        consoleElement.querySelectorAll("[data-skill-panel]").forEach((panel) => {
+            panel.classList.toggle("is-active", panel.dataset.skillPanel === target);
+        });
+    }
+
+    function clearTerminal() {
+        outputArea.innerHTML = welcomeMarkup;
+        removePopup();
+        const terminalWindow = document.querySelector(".terminal-window");
+        if (terminalWindow) {
+            terminalWindow.classList.remove("is-closed", "is-minimized", "is-maximized");
+            removeTaskButton(terminalWindow);
         }
     }
 
-    function initializeClickableCommands() {
-        document.querySelectorAll(".clickable-command").forEach((el) => {
-            el.addEventListener("click", () => {
-                const command = el.dataset.command;
-                if (commands[command]) {
-                    appendOutput(command);
-                    commands[command]();
-                }
-            });
-        });
+    function toggleStartMenu() {
+        if (!startMenu || !startButton) {
+            return;
+        }
+
+        const isOpen = startMenu.classList.toggle("is-open");
+        startButton.setAttribute("aria-expanded", String(isOpen));
     }
 
-    appendWelcomeMessage();
-    addNewTabButton();
+    function closeStartMenu() {
+        startMenu?.classList.remove("is-open");
+        startButton?.setAttribute("aria-expanded", "false");
+    }
+
+    function openPopup(title, content, iconClass = "icon-help") {
+        removePopup();
+
+        const popup = document.createElement("section");
+        popup.className = "popup-window";
+        if (iconClass === "icon-resume") {
+            popup.classList.add("resume-window");
+        }
+        if (iconClass === "icon-projects") {
+            popup.classList.add("projects-window");
+        }
+        popup.dataset.windowTitle = title;
+        popup.dataset.windowIcon = iconClass;
+        popup.innerHTML = `
+            <div class="popup-titlebar">
+                <div class="titlebar-left">
+                    <span class="titlebar-app-icon ${iconClass}" aria-hidden="true"></span>
+                    <span class="popup-title-text">${title}</span>
+                </div>
+                <div class="titlebar-controls">
+                    <button class="titlebar-button" data-window-action="minimize" onclick="event.stopPropagation(); window.handleWindowButton(this); return false;" type="button" aria-label="Minimize ${title}">_</button>
+                    <button class="titlebar-button" data-window-action="maximize" onclick="event.stopPropagation(); window.handleWindowButton(this); return false;" type="button" aria-label="Maximize ${title}">[]</button>
+                    <button class="popup-close" data-window-action="close" onclick="event.stopPropagation(); window.handleWindowButton(this); return false;" type="button" aria-label="Close ${title}">X</button>
+                </div>
+            </div>
+            <div class="popup-body">${content}</div>
+            <div class="window-statusbar">
+                <span>Ready</span>
+                <span>${title}</span>
+            </div>
+        `;
+
+        document.body.appendChild(popup);
+        makeDraggable(popup, ".popup-titlebar");
+        registerWindow(popup);
+        bindWindowActivation(popup);
+        activateWindow(popup);
+    }
+
+    function removePopup() {
+        const popup = document.querySelector(".popup-window");
+        if (!popup) {
+            return;
+        }
+
+        removeTaskButton(popup);
+        popup.remove();
+    }
+
+    function registerWindow(windowElement) {
+        if (!windowElement.dataset.windowId) {
+            windowElement.dataset.windowId = `window-${++windowTaskId}`;
+        }
+    }
+
+    function activateWindow(windowElement) {
+        if (!windowElement || windowElement.classList.contains("is-minimized")) {
+            return;
+        }
+
+        document.querySelectorAll(".terminal-window, .popup-window").forEach((openWindow) => {
+            openWindow.classList.toggle("is-active-window", openWindow === windowElement);
+        });
+        registerWindow(windowElement);
+        windowElement.style.zIndex = String(topWindowZIndex++);
+    }
+
+    function selectDesktopIcon(icon) {
+        document.querySelectorAll(".desktop-icon.is-selected").forEach((selectedIcon) => {
+            selectedIcon.classList.remove("is-selected");
+        });
+        icon.classList.add("is-selected");
+        icon.classList.add("is-launching");
+        window.setTimeout(() => icon.classList.remove("is-launching"), 220);
+    }
+
+    function flashTerminalInput() {
+        const inputRow = document.querySelector(".terminal-input-row");
+        if (!inputRow) {
+            return;
+        }
+
+        inputRow.classList.remove("is-flashing");
+        void inputRow.offsetWidth;
+        inputRow.classList.add("is-flashing");
+    }
+
+    function fillTerminalCommand(command) {
+        restoreTerminal();
+        input.value = command;
+        input.focus();
+        flashTerminalInput();
+    }
+
+    function bindWindowActivation(windowElement) {
+        if (!windowElement || windowElement.dataset.activatesOnClick === "true") {
+            return;
+        }
+
+        windowElement.dataset.activatesOnClick = "true";
+        const activate = () => activateWindow(windowElement);
+
+        if (window.PointerEvent) {
+            windowElement.addEventListener("pointerdown", activate);
+        } else {
+            windowElement.addEventListener("mousedown", activate);
+            windowElement.addEventListener("touchstart", activate, { passive: true });
+        }
+    }
+
+    function handleWindowAction(control) {
+        const windowElement = control.closest(".terminal-window, .popup-window");
+        if (!windowElement) {
+            return;
+        }
+
+        registerWindow(windowElement);
+
+        const action = control.dataset.windowAction;
+        if (action === "minimize") {
+            minimizeWindow(windowElement);
+            return;
+        }
+
+        if (action === "maximize") {
+            toggleMaximizeWindow(windowElement);
+            return;
+        }
+
+        if (action === "close") {
+            closeWindow(windowElement);
+        }
+    }
+
+    function closeWindow(windowElement) {
+        removeTaskButton(windowElement);
+
+        if (windowElement.classList.contains("terminal-window")) {
+            windowElement.classList.add("is-closed");
+            windowElement.classList.remove("is-minimized", "is-maximized");
+            document.querySelector(".popup-window") && activateWindow(document.querySelector(".popup-window"));
+            return;
+        }
+
+        windowElement.remove();
+        const terminalWindow = document.querySelector(".terminal-window:not(.is-closed):not(.is-minimized)");
+        if (terminalWindow) {
+            activateWindow(terminalWindow);
+        }
+    }
+
+    function minimizeWindow(windowElement) {
+        windowElement.classList.add("is-minimized");
+        windowElement.classList.remove("is-maximized");
+        createTaskButton(windowElement);
+        const nextWindow = document.querySelector(".popup-window:not(.is-minimized), .terminal-window:not(.is-minimized):not(.is-closed)");
+        if (nextWindow) {
+            activateWindow(nextWindow);
+        }
+    }
+
+    function restoreWindow(windowElement) {
+        windowElement.classList.remove("is-minimized");
+        removeTaskButton(windowElement);
+        activateWindow(windowElement);
+    }
+
+    function toggleMaximizeWindow(windowElement) {
+        restoreWindow(windowElement);
+        windowElement.classList.toggle("is-maximized");
+        windowElement.style.zIndex = String(topWindowZIndex++);
+    }
+
+    function createTaskButton(windowElement) {
+        if (!taskbarTray || !windowElement.dataset.windowId) {
+            return;
+        }
+
+        const existingButton = taskbarTray.querySelector(`[data-task-window="${windowElement.dataset.windowId}"]`);
+        if (existingButton) {
+            return;
+        }
+
+        const button = document.createElement("button");
+        button.className = "task-button";
+        button.type = "button";
+        button.dataset.taskWindow = windowElement.dataset.windowId;
+        button.innerHTML = `
+            <span class="task-button-icon ${windowElement.dataset.windowIcon || "icon-help"}" aria-hidden="true"></span>
+            <span>${windowElement.dataset.windowTitle || "Window"}</span>
+        `;
+        button.addEventListener("click", (event) => {
+            event.stopPropagation();
+            restoreWindow(windowElement);
+        });
+        taskbarTray.appendChild(button);
+    }
+
+    function removeTaskButton(windowElement) {
+        if (!taskbarTray || !windowElement.dataset.windowId) {
+            return;
+        }
+
+        taskbarTray.querySelector(`[data-task-window="${windowElement.dataset.windowId}"]`)?.remove();
+    }
+
+    function makeDraggable(windowElement, handleSelector) {
+        const handle = windowElement.querySelector(handleSelector);
+
+        if (!handle || windowElement.dataset.draggable === "true") {
+            return;
+        }
+
+        windowElement.dataset.draggable = "true";
+
+        const getPoint = (event) => {
+            const touch = event.touches?.[0] || event.changedTouches?.[0];
+            return {
+                clientX: touch?.clientX ?? event.clientX,
+                clientY: touch?.clientY ?? event.clientY,
+            };
+        };
+
+        const startDragging = (event) => {
+            if (event.target.closest("button, a, input") || windowElement.classList.contains("is-maximized")) {
+                return;
+            }
+
+            event.preventDefault();
+            const rect = windowElement.getBoundingClientRect();
+            const point = getPoint(event);
+            const offsetX = point.clientX - rect.left;
+            const offsetY = point.clientY - rect.top;
+
+            windowElement.style.position = "fixed";
+            windowElement.style.left = `${rect.left}px`;
+            windowElement.style.top = `${rect.top}px`;
+            windowElement.style.margin = "0";
+            windowElement.style.transform = "none";
+            windowElement.style.zIndex = String(topWindowZIndex++);
+            windowElement.classList.add("is-dragging");
+
+            if (event.pointerId !== undefined) {
+                handle.setPointerCapture?.(event.pointerId);
+            }
+
+            const moveWindow = (moveEvent) => {
+                const movePoint = getPoint(moveEvent);
+                const maxLeft = Math.max(0, window.innerWidth - windowElement.offsetWidth);
+                const maxTop = Math.max(0, window.innerHeight - windowElement.offsetHeight);
+                const nextLeft = Math.min(Math.max(0, movePoint.clientX - offsetX), maxLeft);
+                const nextTop = Math.min(Math.max(0, movePoint.clientY - offsetY), maxTop);
+
+                windowElement.style.left = `${nextLeft}px`;
+                windowElement.style.top = `${nextTop}px`;
+            };
+
+            const stopDragging = () => {
+                windowElement.classList.remove("is-dragging");
+                document.removeEventListener("pointermove", moveWindow);
+                document.removeEventListener("pointerup", stopDragging);
+                document.removeEventListener("pointercancel", stopDragging);
+                document.removeEventListener("mousemove", moveWindow);
+                document.removeEventListener("mouseup", stopDragging);
+                document.removeEventListener("touchmove", moveWindow);
+                document.removeEventListener("touchend", stopDragging);
+                document.removeEventListener("touchcancel", stopDragging);
+            };
+
+            if (event.type === "pointerdown") {
+                document.addEventListener("pointermove", moveWindow);
+                document.addEventListener("pointerup", stopDragging);
+                document.addEventListener("pointercancel", stopDragging);
+            } else if (event.type === "touchstart") {
+                document.addEventListener("touchmove", moveWindow, { passive: false });
+                document.addEventListener("touchend", stopDragging);
+                document.addEventListener("touchcancel", stopDragging);
+            } else {
+                document.addEventListener("mousemove", moveWindow);
+                document.addEventListener("mouseup", stopDragging);
+            }
+        };
+
+        if (window.PointerEvent) {
+            handle.addEventListener("pointerdown", startDragging);
+        } else {
+            handle.addEventListener("mousedown", startDragging);
+            handle.addEventListener("touchstart", startDragging, { passive: false });
+        }
+    }
+
+    function updateClock() {
+        if (!taskbarClock) {
+            return;
+        }
+
+        const time = new Intl.DateTimeFormat("en-US", {
+            hour: "numeric",
+            minute: "2-digit",
+        }).format(new Date());
+
+        taskbarClock.textContent = time;
+    }
+
+    updateClock();
+    window.setInterval(updateClock, 60000);
 });
