@@ -102,7 +102,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 <section class="about-profile">
                     <div class="about-sidebar">
                         <div class="profile-photo-frame">
-                            <img src="image-self.jpg" alt="Smaran Pokharel portrait" class="profile-photo">
+                            <img src="image-self.jpg?v=20260429-photo" alt="Smaran Pokharel portrait" class="profile-photo">
                         </div>
                         <div class="about-status">
                             <span>Available for internships</span>
