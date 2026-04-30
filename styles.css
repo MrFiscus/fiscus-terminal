@@ -1682,14 +1682,13 @@ body {
 }
 
 .start-logo {
-  width: 14px;
-  height: 14px;
-  background:
-    linear-gradient(90deg, #f25022 0 50%, #7fba00 50% 100%),
-    linear-gradient(90deg, #00a4ef 0 50%, #ffb900 50% 100%);
-  background-size: 100% 50%, 100% 50%;
-  background-position: top, bottom;
+  width: 18px;
+  height: 18px;
+  background-image: url("./S-removebg-preview.png");
+  background-size: contain;
+  background-position: center;
   background-repeat: no-repeat;
+  image-rendering: auto;
 }
 
 .taskbar-tray {
