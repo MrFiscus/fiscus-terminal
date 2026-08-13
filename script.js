@@ -1,7 +1,7 @@
 document.addEventListener("DOMContentLoaded", () => {
     const input = document.getElementById("terminal-input");
     const outputArea = document.getElementById("output-area");
-    const resumePdf = "Smaran-Resume (1).pdf";
+    const resumePdf = "Smaran-Pokharel-Resume.pdf";
     const taskbarClock = document.getElementById("taskbar-clock");
     const startButton = document.getElementById("start-button");
     const startMenu = document.getElementById("start-menu");
@@ -288,16 +288,43 @@ document.addEventListener("DOMContentLoaded", () => {
                 </section>
                 <section class="project-list">
                     <article class="project-card">
+                        <div class="project-image-frame"><img class="project-image" src="https://raw.githubusercontent.com/MrFiscus/Fipher-Keys/main/docs/screenshots/dashboard.png" alt="Fipher Keys dashboard screenshot" loading="lazy"></div>
+                        <div class="project-content">
+                            <p class="project-kicker">Facilities Key Management System</p>
+                            <h3 class="project-title">Fipher Keys</h3>
+                            <p class="project-meta">DSU Facilities Management was running key tracking off a single spreadsheet. Fipher Keys replaces it with a real system: 1,000+ keys, 28+ years of history, and 400+ holders, browsable through a campus map, dashboard, directory, and catalog.</p>
+                            <p class="project-detail">Legacy multi-sheet Excel exports round-trip through ExcelJS by matching six sheets' worth of inconsistent column headings, and paper request/return forms get parsed automatically with pdf.js and a Tesseract OCR fallback. Row-level security and a swappable localStorage/Supabase layer let the platform serve multiple organizations from one codebase, with a full issue/return workflow and an admin console for managing access.</p>
+                            <div class="project-tags"><span>React</span><span>TypeScript</span><span>Vite</span><span>Supabase</span><span>ExcelJS</span><span>Tesseract OCR</span></div>
+                            <div class="action-row">
+                                <a class="win-button" href="https://github.com/MrFiscus/Fipher-Keys" target="_blank" rel="noreferrer">GitHub</a>
+                                <a class="win-button" href="https://fipher-keys.vercel.app/" target="_blank" rel="noreferrer">Live Site</a>
+                            </div>
+                        </div>
+                    </article>
+                    <article class="project-card">
                         <div class="project-image-frame"><img class="project-image" src="Projects/terminal-quest.png" alt="Terminal Quest project screenshot" loading="lazy"></div>
                         <div class="project-content">
                             <p class="project-kicker">Interactive Learning Platform</p>
                             <h3 class="project-title">Terminal Quest</h3>
-                            <p class="project-meta">A browser-based terminal dungeon RPG that teaches beginner Linux commands through exploration instead of lectures. I mapped file-system concepts into game mechanics: rooms behave like directories, doors behave like folders, and collectible items behave like files.</p>
-                            <p class="project-detail">The build combines typed frontend state, custom command parsing, game progression, and Supabase-backed persistence into a learning experience that feels more like playing than studying.</p>
-                            <div class="project-tags"><span>TypeScript</span><span>React</span><span>Supabase</span><span>Command Parser</span><span>AI Fallback</span><span>Game UI</span></div>
+                            <p class="project-meta">Most Linux tutorials tell you what a command does; Terminal Quest makes you use one to get anywhere. Rooms are directories, locked doors are folders you can't cd into yet, and items are files you ls, cat, and mv your way toward.</p>
+                            <p class="project-detail">Gemini, wired in through Supabase Edge Functions, generates levels and rooms on the fly and tutors players mid-run, with a deterministic local fallback so the game keeps working if the API doesn't respond. Email/Google auth, persistent saves, per-player stats, and a command-mastery profile track exactly which commands someone still needs practice with.</p>
+                            <div class="project-tags"><span>TypeScript</span><span>React</span><span>Supabase</span><span>Gemini API</span><span>Command Parser</span><span>Game UI</span></div>
                             <div class="action-row">
                                 <a class="win-button" href="https://github.com/MrFiscus/TerminalQuest" target="_blank" rel="noreferrer">GitHub</a>
                                 <a class="win-button" href="https://terminalquest-puce.vercel.app" target="_blank" rel="noreferrer">Live Site</a>
+                            </div>
+                        </div>
+                    </article>
+                    <article class="project-card">
+                        <div class="project-image-frame"><img class="project-image" src="https://opengraph.githubassets.com/1/MrFiscus/EveryCent" alt="EveryCent project screenshot" loading="lazy"></div>
+                        <div class="project-content">
+                            <p class="project-kicker">AI Grocery Price Forecasting</p>
+                            <h3 class="project-title">EveryCent</h3>
+                            <p class="project-meta">Retailers get algorithmic pricing intelligence; grocery shoppers get sticker shock. EveryCent closes that gap by running 25 years of USDA retail price data through Google TimesFM 2.0 on BigQuery ML, hitting an R&sup2; of 0.91 against a 0.76 moving-average baseline (MAE: $0.06) &mdash; good enough to win Best Statistical Model out of 800+ teams at HackDavis 2026.</p>
+                            <p class="project-detail">The forecasts turn into plain buy/wait/stable calls timed to SNAP benefit cycles, so the households most exposed to price swings get the earliest warning. Claude Haiku layers real-time web search on top to explain why a price is moving, next to the TimesFM chart and a running smart shopping list.</p>
+                            <div class="project-tags"><span>React</span><span>TypeScript</span><span>Python</span><span>BigQuery ML</span><span>TimesFM 2.0</span><span>Claude API</span></div>
+                            <div class="action-row">
+                                <a class="win-button" href="https://github.com/MrFiscus/EveryCent" target="_blank" rel="noreferrer">GitHub</a>
                             </div>
                         </div>
                     </article>
@@ -306,11 +333,24 @@ document.addEventListener("DOMContentLoaded", () => {
                         <div class="project-content">
                             <p class="project-kicker">AI Productivity Tool</p>
                             <h3 class="project-title">HandAll</h3>
-                            <p class="project-meta">An AI-supported student planner focused on classes, assignments, routines, goals, calendar imports, motivation tracking, and assistant-guided planning. The product direction is built around helping students convert messy obligations into actionable schedules.</p>
-                            <p class="project-detail">The app is shaped around real student time-management pain points, with backend routes, planning logic, and AI-assisted flows working together to make schedules easier to act on.</p>
-                            <div class="project-tags"><span>TypeScript</span><span>FastAPI</span><span>AI Planner</span><span>Calendar Logic</span><span>Hackathon Build</span></div>
+                            <p class="project-meta">Static to-do lists don't account for burnout; HandAll does. A React/TypeScript frontend and Node/Express backend hand scheduling off to a Python FastAPI service running LangGraph agents that decompose tasks and redistribute workload as capacity changes.</p>
+                            <p class="project-detail">Google Calendar OAuth and iCal/ICS import feed real commitments into the planner with a preview step before anything syncs, and a motivation slider lets a student nudge the AI between "recovery mode" and "lock-in mode" and watch the whole week rebalance live. I built the Calendar connect flow as part of a 4-person team that shipped the full product in a 36-hour hackathon sprint.</p>
+                            <div class="project-tags"><span>TypeScript</span><span>FastAPI</span><span>LangGraph</span><span>Google Calendar</span><span>Docker</span><span>Hackathon Build</span></div>
                             <div class="action-row">
                                 <a class="win-button" href="https://github.com/MrFiscus/HandAll" target="_blank" rel="noreferrer">GitHub</a>
+                            </div>
+                        </div>
+                    </article>
+                    <article class="project-card">
+                        <div class="project-image-frame"><img class="project-image" src="https://raw.githubusercontent.com/MrFiscus/DrPrompt/main/ui-preview/image.png" alt="Dr. Prompt extension screenshot" loading="lazy"></div>
+                        <div class="project-content">
+                            <p class="project-kicker">Chrome Extension</p>
+                            <h3 class="project-title">Dr. Prompt</h3>
+                            <p class="project-meta">A rough, vague prompt gets a rough, vague answer out of any model. Dr. Prompt catches that before you hit send: a Manifest V3 extension that rewrites your prompt with the Claude API, falling back to a local rule-based optimizer the moment the API is unreachable.</p>
+                            <p class="project-detail">Inline suggestion bubbles appear directly inside ChatGPT, Claude, Gemini, Mistral, and Perplexity, and a right-click context menu sends any selected webpage text straight into the optimizer. A searchable Popular Prompts library with category filters and a before/after token count makes the efficiency gain visible instead of just implied.</p>
+                            <div class="project-tags"><span>JavaScript</span><span>Chrome Extension API</span><span>Manifest V3</span><span>Claude API</span></div>
+                            <div class="action-row">
+                                <a class="win-button" href="https://github.com/MrFiscus/DrPrompt" target="_blank" rel="noreferrer">GitHub</a>
                             </div>
                         </div>
                     </article>
@@ -319,8 +359,8 @@ document.addEventListener("DOMContentLoaded", () => {
                         <div class="project-content">
                             <p class="project-kicker">Music Data App</p>
                             <h3 class="project-title">How Performative Am I?</h3>
-                            <p class="project-meta">A Spotify-powered web app that analyzes listening behavior and turns it into a playful "performative" score with artist breakdowns and shareable results. The project blends API integration, authentication, visual feedback, and a strong social hook.</p>
-                            <p class="project-detail">Behind the playful concept is a full OAuth flow, Spotify data handling, scoring logic, and a public-facing interface designed to make personal music data instantly understandable.</p>
+                            <p class="project-meta">"Performative" listening became a whole internet joke, so I built the app that scores it. It pulls your real Spotify history through OAuth PKCE and turns your top artists into a shareable performative score, no manual data entry required.</p>
+                            <p class="project-detail">The scoring model weighs genre signals and listening patterns rather than just artist names, and the result screen is built to be screenshotted &mdash; which is most of why it spread. Public launch meant hardening the OAuth flow and rate-limiting Spotify calls for traffic I couldn't predict in advance.</p>
                             <div class="project-tags"><span>React</span><span>TypeScript</span><span>Spotify API</span><span>OAuth PKCE</span><span>Data UI</span><span>Public Launch</span></div>
                             <div class="action-row">
                                 <a class="win-button" href="https://github.com/MrFiscus/howperformativeami" target="_blank" rel="noreferrer">GitHub</a>
@@ -333,8 +373,8 @@ document.addEventListener("DOMContentLoaded", () => {
                         <div class="project-content">
                             <p class="project-kicker">Movie Discovery Platform</p>
                             <h3 class="project-title">Fiscus Films</h3>
-                            <p class="project-meta">A movie discovery and watchlist application with TMDB proxying, user profiles, favorites, search history, Supabase auth/storage, and Socket.IO realtime events. The app focuses on making film discovery feel fast, personal, and interactive.</p>
-                            <p class="project-detail">The system uses backend routes to protect API calls, realtime events for interaction, authentication for user sessions, and persistent storage for favorites, profiles, and search history.</p>
+                            <p class="project-meta">Fiscus Films proxies TMDB through my own backend so API keys never touch the client, then layers user profiles, favorites, and search history with Supabase auth and storage on top of that base.</p>
+                            <p class="project-detail">Socket.IO pushes activity updates in real time instead of relying on polling or a page refresh, which is what makes browsing feel responsive rather than static. Favorites, profiles, and search history all persist server-side, so a user's watchlist survives across devices and sessions.</p>
                             <div class="project-tags"><span>JavaScript</span><span>Express</span><span>Socket.IO</span><span>Supabase</span><span>TMDB API</span><span>Auth</span></div>
                             <div class="action-row">
                                 <a class="win-button" href="https://github.com/MrFiscus/FiscusFilms" target="_blank" rel="noreferrer">GitHub</a>
@@ -347,8 +387,8 @@ document.addEventListener("DOMContentLoaded", () => {
                         <div class="project-content">
                             <p class="project-kicker">Personal Media Tracker</p>
                             <h3 class="project-title">CineList</h3>
-                            <p class="project-meta">A personalized movie tracker for logging films by country, built around the idea that watch history can be explored through geography and culture instead of only ratings or genres.</p>
-                            <p class="project-detail">The idea pushes beyond a basic list app by organizing watch history around place and culture, giving the interface a clearer point of view than a generic movie tracker.</p>
+                            <p class="project-meta">Star ratings flatten a watch history into a single number. CineList organizes films by the country they were made in instead, so your list reads as a map of what cultures and industries you've actually explored on screen.</p>
+                            <p class="project-detail">Logging a film tags it to its country of origin automatically, and the interface surfaces gaps &mdash; regions you haven't watched anything from yet &mdash; the way a passport stamp collection would, rather than just another sortable table.</p>
                             <div class="project-tags"><span>CSS</span><span>JavaScript</span><span>Movie Tracker</span><span>Frontend UI</span><span>Product Design</span></div>
                             <div class="action-row">
                                 <a class="win-button" href="https://github.com/MrFiscus/CineList" target="_blank" rel="noreferrer">GitHub</a>
@@ -360,8 +400,8 @@ document.addEventListener("DOMContentLoaded", () => {
                         <div class="project-content">
                             <p class="project-kicker">Object-Oriented Coursework</p>
                             <h3 class="project-title">Weather App OOD</h3>
-                            <p class="project-meta">A C# weather application created for Object-Oriented Design coursework. The emphasis is on organizing behavior into clear classes, practicing separation of concerns, and building maintainable application structure.</p>
-                            <p class="project-detail">The coursework focused on modeling behavior with readable classes, separating responsibilities cleanly, and practicing maintainable application structure in C#.</p>
+                            <p class="project-meta">Built for my Object-Oriented Design course, this C# weather app is less about the forecast and more about the class diagram behind it &mdash; a graded exercise in keeping data fetching, parsing, and display in separate, single-responsibility classes.</p>
+                            <p class="project-detail">Each layer only knows about the interface of the layer next to it, so swapping the weather data source wouldn't touch the UI code at all &mdash; the whole point of the assignment.</p>
                             <div class="project-tags"><span>C#</span><span>Object-Oriented Design</span><span>Coursework</span><span>Class Structure</span></div>
                             <div class="action-row">
                                 <a class="win-button" href="https://github.com/MrFiscus/weatherapp-OOD" target="_blank" rel="noreferrer">GitHub</a>
@@ -373,8 +413,8 @@ document.addEventListener("DOMContentLoaded", () => {
                         <div class="project-content">
                             <p class="project-kicker">Low-Level Programming</p>
                             <h3 class="project-title">ASM Terminal Game</h3>
-                            <p class="project-meta">A terminal-based game made in Assembly and inspired by Pac-Man. It explores lower-level programming, game-loop thinking, character movement, terminal rendering, and retro interaction design.</p>
-                            <p class="project-detail">Working in Assembly meant building game behavior close to the machine, reasoning through movement and rendering manually, and solving problems without high-level framework shortcuts.</p>
+                            <p class="project-meta">No engine, no framework, no garbage collector &mdash; just registers and memory. This Pac-Man-inspired terminal game is written directly in Assembly, with every frame of movement and every collision check handled by hand.</p>
+                            <p class="project-detail">Rendering the maze and moving the player meant managing screen buffers and input polling manually, the kind of groundwork that a game engine normally hides completely. It forced a much more literal understanding of what a "game loop" actually costs at the instruction level.</p>
                             <div class="project-tags"><span>Assembly</span><span>Terminal Game</span><span>Game Loop</span><span>Low-Level Logic</span><span>Pac-Man Inspired</span></div>
                             <div class="action-row">
                                 <a class="win-button" href="https://github.com/MrFiscus/asm_terminal_game" target="_blank" rel="noreferrer">GitHub</a>
@@ -386,8 +426,8 @@ document.addEventListener("DOMContentLoaded", () => {
                         <div class="project-content">
                             <p class="project-kicker">Unity Game Development</p>
                             <h3 class="project-title">Rocketcar</h3>
-                            <p class="project-meta">A Unity game project built around flying cars and arcade-style movement. The project explores real-time player control, physics-based interaction, scene setup, and the process of building a playable game loop inside a game engine.</p>
-                            <p class="project-detail">The project expands my work into engine-based development, where interaction design depends on movement, physics, scene setup, and fast gameplay prototyping rather than static screens.</p>
+                            <p class="project-meta">Rocketcar is a small arcade prototype about cars that fly: tuning thrust, drag, and gravity in Unity's physics engine until a car flipping through the air still feels controllable instead of random.</p>
+                            <p class="project-detail">Getting the flight feel right meant iterating on rigidbody mass, drag curves, and input response dozens of times &mdash; the kind of tuning work that matters far more to "does this feel good" than any single line of gameplay code.</p>
                             <div class="project-tags"><span>Unity</span><span>Game Development</span><span>Physics</span><span>3D Gameplay</span><span>ASP.NET Repo Language</span></div>
                             <div class="action-row">
                                 <a class="win-button" href="https://github.com/MrFiscus/rocketcar" target="_blank" rel="noreferrer">GitHub</a>
@@ -399,8 +439,8 @@ document.addEventListener("DOMContentLoaded", () => {
                         <div class="project-content">
                             <p class="project-kicker">Unity 3D Game</p>
                             <h3 class="project-title">Baller-3D</h3>
-                            <p class="project-meta">A Unity game featuring 3D ball mechanics and interactive gameplay. It focuses on movement, object behavior, level interaction, and learning how to structure a small game project inside Unity.</p>
-                            <p class="project-detail">This was practice in shaping 3D controls, building playable scenes, and learning how small gameplay systems respond to user input inside Unity.</p>
+                            <p class="project-meta">A compact 3D ball-physics game built to learn Unity's scene and prefab workflow from the ground up &mdash; how a level actually gets assembled, not just how a script gets attached to an object.</p>
+                            <p class="project-detail">Ball momentum, bounce response, and collision layers all needed separate tuning passes before movement stopped feeling floaty, which turned out to be most of the actual "gameplay programming" in a physics-driven game like this one.</p>
                             <div class="project-tags"><span>Unity</span><span>3D Game</span><span>Gameplay Systems</span><span>Player Controls</span><span>ASP.NET Repo Language</span></div>
                             <div class="action-row">
                                 <a class="win-button" href="https://github.com/MrFiscus/Baller-3D" target="_blank" rel="noreferrer">GitHub</a>
@@ -412,8 +452,8 @@ document.addEventListener("DOMContentLoaded", () => {
                         <div class="project-content">
                             <p class="project-kicker">Winning Web Dev Competition</p>
                             <h3 class="project-title">Vsn-Competition</h3>
-                            <p class="project-meta">A complete website built during a web development competition that I won, delivered from concept to finished site in about 5 hours. The project reflects fast execution, practical design decisions, and the ability to ship under real time pressure.</p>
-                            <p class="project-detail">The 5-hour deadline forced quick scoping, fast design decisions, focused frontend implementation, and a finished result polished enough to win the competition.</p>
+                            <p class="project-meta">Concept to finished, deployed site in 5 hours flat, against a clock and other competitors building the same brief &mdash; and it won.</p>
+                            <p class="project-detail">With no time to second-guess layout decisions, scope got cut ruthlessly to whatever moved the site from "started" to "shippable" fastest, which ended up being the actual skill being tested: judgment under a deadline, not just code output.</p>
                             <div class="project-tags"><span>Web Development</span><span>Competition Winner</span><span>5-Hour Build</span><span>Frontend</span><span>Rapid Prototyping</span></div>
                             <div class="action-row">
                                 <a class="win-button" href="https://github.com/MrFiscus/Vsn-Competition" target="_blank" rel="noreferrer">GitHub</a>
@@ -425,8 +465,8 @@ document.addEventListener("DOMContentLoaded", () => {
                         <div class="project-content">
                             <p class="project-kicker">Portfolio Interface</p>
                             <h3 class="project-title">Fiscus Terminal</h3>
-                            <p class="project-meta">A static portfolio website that turns a resume into a Windows 95-inspired desktop with terminal commands, draggable windows, popup apps, a taskbar, resume viewer, and responsive mobile behavior.</p>
-                            <p class="project-detail">The site keeps everything static and GitHub Pages-friendly while still supporting draggable windows, terminal commands, responsive behavior, and a portfolio experience with personality.</p>
+                            <p class="project-meta">This site. A resume that refused to be a PDF, so it became a Windows 95 desktop instead &mdash; draggable windows, a working taskbar, popup apps, and a terminal you can actually type commands into.</p>
+                            <p class="project-detail">No build step, no backend, no framework &mdash; just HTML, CSS, and vanilla JavaScript deployed straight to GitHub Pages, with window management, drag physics, and mobile responsiveness all hand-rolled instead of pulled from a UI library.</p>
                             <div class="project-tags"><span>HTML</span><span>CSS</span><span>JavaScript</span><span>Static Site</span><span>GitHub Pages</span><span>Responsive UI</span></div>
                             <div class="action-row">
                                 <a class="win-button" href="https://github.com/MrFiscus/fiscus-terminal" target="_blank" rel="noreferrer">GitHub</a>
